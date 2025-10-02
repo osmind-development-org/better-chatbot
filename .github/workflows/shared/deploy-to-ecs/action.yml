@@ -1,0 +1,143 @@
+name: Deploy to ECS
+description: Deploy application to ECS
+
+inputs:
+  aws_account_id:
+    description: AWS account ID
+    required: true
+  aws_region:
+    description: AWS region
+    required: false
+    default: us-west-2
+  aws_role_name:
+    description: AWS IAM role name for deployment
+    required: true
+  cluster_name:
+    description: ECS cluster name
+    required: true
+  database_url:
+    description: Database URL for migrations
+    required: false
+  env:
+    description: Environment
+    required: true
+  ecs_config_path:
+    description: Path to ECS config directory (relative to working directory)
+    required: true
+    default: "./ecs/"
+  image_name:
+    description: Image name
+    required: true
+  image_tag:
+    description: Image tag
+    required: true
+  keep_recent:
+    description: Number of recent task definitions to keep
+    required: false
+    default: "5"
+  migration_cmd:
+    description: Migration command
+    required: false
+  service_name:
+    description: ECS service name
+    required: true
+  timeout_minutes:
+    description: Timeout in minutes
+    required: false
+    default: "15"
+  working_directory:
+    description: Working directory
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/${{ inputs.aws_role_name }}
+        aws-region: ${{ inputs.aws_region }}
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: ".nvmrc"
+        cache: "npm"
+        cache-dependency-path: "${{ inputs.working_directory }}/package-lock.json"
+
+    - name: Set environment variables
+      shell: bash
+      run: |
+        echo "ENV=${{ inputs.env }}" >> $GITHUB_ENV
+        echo "IMAGE_TAG=${{ inputs.image_tag }}" >> $GITHUB_ENV
+
+    - name: Validate deployment scripts
+      shell: bash
+      run: |
+        if [[ ! -f .github/deploy-scripts/register-task-def.sh ]]; then
+          echo "Error: .github/deploy-scripts/register-task-def.sh not found"
+          exit 1
+        fi
+        if [[ ! -f .github/deploy-scripts/update-ecs-service.sh ]]; then
+          echo "Error: .github/deploy-scripts/update-ecs-service.sh not found"
+          exit 1
+        fi
+        if [[ -n "${{ inputs.database_url }}" && ! -f .github/deploy-scripts/run-migrations.sh ]]; then
+          echo "Error: .github/deploy-scripts/run-migrations.sh not found but migrations requested"
+          exit 1
+        fi
+        if [[ ! -f .github/deploy-scripts/deregister-old-task-def.sh ]]; then
+          echo "Error: .github/deploy-scripts/deregister-old-task-def.sh not found"
+          exit 1
+        fi
+
+        echo "All required deployment scripts found"
+
+    - name: Install dependencies
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: npm ci --only=production
+
+    - name: Register new task definitions
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      id: register_task_def
+      run: |
+        ${{ github.workspace }}/.github/deploy-scripts/register-task-def.sh \
+          --aws-account-id "${{ inputs.aws_account_id }}" \
+          --aws-region "${{ inputs.aws_region }}" \
+          --ecr-repo "${{ inputs.service_name }}" \
+          --ecs-config-path "${{ inputs.ecs_config_path }}" \
+          --env "${{ inputs.env }}" \
+          --image-tag "${{ inputs.image_tag }}"
+
+    - name: Run migrations
+      if: ${{ inputs.database_url != '' }}
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        ${{ github.workspace }}/.github/deploy-scripts/run-migrations.sh \
+          --env "${{ inputs.env }}" \
+          --database-url "${{ inputs.database_url }}" \
+          --migration-cmd "${{ inputs.migration_cmd }}"
+
+    - name: Update ECS service
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      id: update_ecs_service
+      run: |
+        ${{ github.workspace }}/.github/deploy-scripts/update-ecs-service.sh \
+          --cluster-name "${{ inputs.cluster_name }}" \
+          --service-name "${{ inputs.service_name }}" \
+          --timeout-minutes "${{ inputs.timeout_minutes }}"
+
+    - name: Deregister old task definitions
+      if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' }}
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      id: deregister_old_task_def
+      run: |
+        ${{ github.workspace }}/.github/deploy-scripts/deregister-old-task-def.sh \
+          --ecs-config-path "${{ inputs.ecs_config_path }}" \
+          --env "${{ inputs.env }}" \
+          --keep-recent "${{ inputs.keep_recent }}"

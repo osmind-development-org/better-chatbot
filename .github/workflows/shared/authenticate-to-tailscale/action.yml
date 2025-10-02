@@ -1,0 +1,34 @@
+name: Authenticate to Tailscale
+description: Setup Tailscale connection for secure database access
+
+inputs:
+  oauth_client_id:
+    description: Tailscale OAuth client ID
+    required: true
+  oauth_secret:
+    description: Tailscale OAuth secret
+    required: true
+  tags:
+    description: Tailscale tags
+    required: false
+    default: tag:ci
+  version:
+    description: Tailscale version
+    required: false
+    default: latest
+  use_cache:
+    description: Whether to use cache
+    required: false
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Tailscale
+      uses: tailscale/github-action@v3
+      with:
+        oauth-client-id: ${{ inputs.oauth_client_id }}
+        oauth-secret: ${{ inputs.oauth_secret }}
+        tags: ${{ inputs.tags }}
+        version: ${{ inputs.version }}
+        use-cache: ${{ inputs.use_cache }}
