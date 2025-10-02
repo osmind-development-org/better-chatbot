@@ -1,0 +1,100 @@
+name: Build and Push Application to ECR
+description: Build and push application Docker image to ECR
+
+inputs:
+  env:
+    description: Environment
+    required: true
+  aws_account_id:
+    description: AWS account ID
+    required: true
+  ecr_registry:
+    description: ECR registry URL
+    required: true
+  ecr_repo_name:
+    description: ECR repository name
+    required: true
+  working_directory:
+    description: Working directory containing package.json
+    required: true
+  build_context:
+    description: Docker build context path
+    required: true
+  platforms:
+    description: Target platforms for build
+    required: false
+    default: linux/arm64
+  aws_region:
+    description: AWS region
+    required: false
+    default: us-west-2
+
+outputs:
+  IMAGE_NAME:
+    description: "Image name from ECR registry"
+    value: ${{ steps.set_image_name.outputs.IMAGE_NAME }}
+  IMAGE_TAG:
+    description: "Image tag (version + short SHA)"
+    value: ${{ steps.set_image_tag.outputs.IMAGE_TAG }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set SHORT_SHA env var
+      id: set_short_sha
+      uses: ./.github/workflows/shared/set-short-sha
+
+    - name: Set image name
+      shell: bash
+      id: set_image_name
+      run: |
+        IMAGE_NAME="${{ inputs.ecr_registry }}/${{ inputs.ecr_repo_name }}" \
+        && echo "IMAGE_NAME=$IMAGE_NAME" \
+        && echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_OUTPUT
+
+    - name: Extract version from package.json and create image tag
+      shell: bash
+      id: set_image_tag
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        if [[ ! -f package.json ]]; then
+          echo "Error: package.json not found in ${{ inputs.working_directory }}"
+          exit 1
+        fi
+        VERSION=$(jq -r .version package.json) \
+        && if [[ "$VERSION" == "null" ]]; then
+          echo "Error: version field not found in package.json"
+          exit 1
+        fi \
+        && IMAGE_TAG="${VERSION}-${{ steps.set_short_sha.outputs.SHORT_SHA }}" \
+        && echo "IMAGE_TAG=$IMAGE_TAG" \
+        && echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/github-action-ecr-push-image
+        aws-region: ${{ inputs.aws_region }}
+
+    - name: Login to Amazon ECR
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ inputs.ecr_registry }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build and push Docker image with cache
+      uses: docker/build-push-action@v6
+      with:
+        context: ${{ inputs.build_context }}
+        push: true
+        tags: |
+          ${{ steps.set_image_name.outputs.IMAGE_NAME }}:${{ steps.set_short_sha.outputs.SHORT_SHA }}
+          ${{ steps.set_image_name.outputs.IMAGE_NAME }}:${{ steps.set_image_tag.outputs.IMAGE_TAG }}
+          ${{ steps.set_image_name.outputs.IMAGE_NAME }}:current-${{ inputs.env }}
+        cache-from: |
+          type=registry,ref=${{ steps.set_image_name.outputs.IMAGE_NAME }}:cache
+        cache-to: |
+          type=registry,mode=max,image-manifest=true,oci-mediatypes=true,ref=${{ steps.set_image_name.outputs.IMAGE_NAME }}:cache
+        platforms: ${{ inputs.platforms }}

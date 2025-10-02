@@ -1,0 +1,18 @@
+name: Set Short SHA
+description: Generate a short commit SHA for tagging
+
+outputs:
+  SHORT_SHA:
+    description: "Short commit SHA (first 7 characters)"
+    value: ${{ steps.set_short_sha.outputs.SHORT_SHA }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Generate short SHA
+      id: set_short_sha
+      shell: bash
+      run: |
+        SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+        echo "SHORT_SHA=$SHORT_SHA"
+        echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
