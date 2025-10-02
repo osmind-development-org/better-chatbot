@@ -58,12 +58,15 @@ runs:
         role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/${{ inputs.aws_role_name }}
         aws-region: ${{ inputs.aws_region }}
 
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version-file: ".nvmrc"
-        cache: "npm"
-        cache-dependency-path: "${{ inputs.working_directory }}/package-lock.json"
+        cache: "pnpm"
+        cache-dependency-path: "${{ inputs.working_directory }}/pnpm-lock.yaml"
 
     - name: Set environment variables
       shell: bash
@@ -96,7 +99,7 @@ runs:
     - name: Install dependencies
       shell: bash
       working-directory: ${{ inputs.working_directory }}
-      run: npm ci --only=production
+      run: pnpm install --frozen-lockfile --prod
 
     - name: Register new task definitions
       shell: bash

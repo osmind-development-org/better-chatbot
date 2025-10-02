@@ -58,7 +58,7 @@ The workflow will still wait for approval before deploying.
    - Pushes to ECR with three tags:
      - `<short-sha>` - 7-character commit hash
      - `<version>-<short-sha>` - Full semantic version tag
-     - `current-production` - Latest production image
+     - `latest` - Latest production image
 
 **Outputs**:
 
@@ -250,7 +250,7 @@ Every build creates three tags:
 2. **Semantic Version**: `1.22.0-abc123d`
    - Combines version from package.json with short SHA
    - Used for deployment tracking
-3. **Environment Tag**: `current-production`
+3. **Latest Tag**: `latest`
    - Always points to the latest production image
    - Useful for quick rollbacks or testing
 

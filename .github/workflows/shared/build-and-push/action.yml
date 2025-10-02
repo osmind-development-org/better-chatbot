@@ -88,11 +88,12 @@ runs:
       uses: docker/build-push-action@v6
       with:
         context: ${{ inputs.build_context }}
+        file: docker/Dockerfile
         push: true
         tags: |
           ${{ steps.set_image_name.outputs.IMAGE_NAME }}:${{ steps.set_short_sha.outputs.SHORT_SHA }}
           ${{ steps.set_image_name.outputs.IMAGE_NAME }}:${{ steps.set_image_tag.outputs.IMAGE_TAG }}
-          ${{ steps.set_image_name.outputs.IMAGE_NAME }}:current-${{ inputs.env }}
+          ${{ steps.set_image_name.outputs.IMAGE_NAME }}:latest
         cache-from: |
           type=registry,ref=${{ steps.set_image_name.outputs.IMAGE_NAME }}:cache
         cache-to: |
