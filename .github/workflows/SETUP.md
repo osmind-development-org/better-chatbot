@@ -22,7 +22,7 @@ When you push to `main`, the workflow automatically:
 
 1. Builds the Docker image
 2. Tags it with version + short SHA (e.g., `1.22.0-abc123`)
-3. Pushes to ECR with tags: `<sha>`, `<version-sha>`, `current-production`
+3. Pushes to ECR with tags: `<sha>`, `<version-sha>`, `latest`
 
 ### Manual Deploy (workflow_dispatch)
 
