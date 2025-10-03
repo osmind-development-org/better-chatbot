@@ -132,6 +132,18 @@ export class MCPClient {
         }
         return this.oauthProvider;
       }
+
+      // Check if static OAuth credentials are provided
+      const staticClientInfo = this.serverConfig.oauth
+        ? {
+            client_id: this.serverConfig.oauth.clientId,
+            client_secret: this.serverConfig.oauth.clientSecret,
+            redirect_uris: [`${BASE_URL}/api/mcp/oauth/callback`],
+            grant_types: ["authorization_code", "refresh_token"],
+            response_types: ["code"],
+          }
+        : undefined;
+
       this.oauthProvider = new PgOAuthClientProvider({
         name: this.name,
         mcpServerId: this.id,
@@ -141,12 +153,15 @@ export class MCPClient {
           client_name: `better-chatbot-${this.name}`,
           grant_types: ["authorization_code", "refresh_token"],
           response_types: ["code"],
-          token_endpoint_auth_method: "none", // PKCE flow
-          scope: "mcp:tools",
+          token_endpoint_auth_method: staticClientInfo
+            ? "client_secret_post"
+            : "none", // Use client_secret_post for pre-registered clients
+          scope: this.serverConfig.oauth?.scopes || "mcp:tools",
           redirect_uris: [`${BASE_URL}/api/mcp/oauth/callback`],
           software_id: "better-chatbot",
           software_version: "1.0.0",
         },
+        staticClientInfo,
         onRedirectToAuthorization: async (authorizationUrl: URL) => {
           this.logger.info(
             "OAuth authorization required - user interaction needed",

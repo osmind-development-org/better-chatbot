@@ -22,6 +22,7 @@ export const GoogleConfigSchema = z.object({
   clientSecret: z.string().min(1),
   disableSignUp: z.boolean().optional(),
   prompt: z.literal("select_account").optional(),
+  overrideUserInfoOnSignIn: z.boolean().optional(),
 });
 
 export const MicrosoftConfigSchema = z.object({

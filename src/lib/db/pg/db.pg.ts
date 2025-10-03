@@ -6,6 +6,6 @@ import { drizzle as drizzlePg } from "drizzle-orm/node-postgres";
 //     console.log({ query, params });
 //   }
 // }
-export const pgDb = drizzlePg(process.env.POSTGRES_URL!, {
+export const pgDb = drizzlePg(`${process.env.POSTGRES_URL}?sslmode=no-verify`, {
   //   logger: new MyLogger(),
 });

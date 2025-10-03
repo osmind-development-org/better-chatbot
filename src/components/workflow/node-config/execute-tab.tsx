@@ -406,14 +406,14 @@ ${workflow!.description ? `tool-description: ${workflow!.description}` : ""}`,
             </div>
           ) : (
             <>
-              <div
-                tabIndex={1}
+              <button
+                type="button"
                 onClick={handleGenerateInputWithAI}
                 className="hover:bg-secondary rounded-sm px-2 py-1 flex items-center gap-2 ml-auto text-xs font-semibold cursor-pointer hover:text-primary transition-colors"
               >
                 {t("Common.generateInputWithAI")}
                 <WandSparklesIcon className="size-3" />
-              </div>
+              </button>
               {inputSchemaIterator.map(([key, schema], i) => {
                 return (
                   <div key={key ?? i}>

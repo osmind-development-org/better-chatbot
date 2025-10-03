@@ -27,6 +27,7 @@ export class PgOAuthClientProvider implements OAuthClientProvider {
   private cachedAuthData: McpOAuthSession | undefined;
   private logger: ConsolaInstance;
   private initialized = false;
+  private useStaticCredentials: boolean = false;
 
   constructor(
     private config: {
@@ -36,6 +37,7 @@ export class PgOAuthClientProvider implements OAuthClientProvider {
       _clientMetadata: OAuthClientMetadata;
       onRedirectToAuthorization: (authUrl: URL) => Promise<void>;
       state?: string;
+      staticClientInfo?: OAuthClientInformationFull;
     },
   ) {
     this.logger = globalLogger.withDefaults({
@@ -44,6 +46,10 @@ export class PgOAuthClientProvider implements OAuthClientProvider {
         `[MCP OAuth Provider ${this.config.name}-${generateUUID().slice(0, 4)}] `,
       ),
     });
+    this.useStaticCredentials = !!this.config.staticClientInfo;
+    if (this.useStaticCredentials) {
+      this.logger.info("Using pre-registered OAuth client credentials");
+    }
   }
 
   private async initializeOAuth() {
@@ -116,6 +122,11 @@ export class PgOAuthClientProvider implements OAuthClientProvider {
   }
 
   async clientInformation(): Promise<OAuthClientInformation | undefined> {
+    // If using static credentials, return them directly
+    if (this.useStaticCredentials && this.config.staticClientInfo) {
+      return this.config.staticClientInfo;
+    }
+
     const authData = await this.getAuthData();
     if (authData?.clientInfo) {
       // Check if redirect URI matches (security check)
@@ -140,6 +151,14 @@ export class PgOAuthClientProvider implements OAuthClientProvider {
   async saveClientInformation(
     clientCredentials: OAuthClientInformationFull,
   ): Promise<void> {
+    // Don't save if using static credentials
+    if (this.useStaticCredentials) {
+      this.logger.debug(
+        `Using static credentials, skipping dynamic registration`,
+      );
+      return;
+    }
+
     await this.updateAuthData({
       clientInfo: clientCredentials,
     });

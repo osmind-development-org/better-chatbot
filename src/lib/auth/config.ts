@@ -56,6 +56,7 @@ function parseSocialAuthConfigs() {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       ...(forceAccountSelection && { prompt: "select_account" as const }),
       disableSignUp,
+      overrideUserInfoOnSignIn: true,
     };
 
     const googleResult = GoogleConfigSchema.safeParse(googleConfig);
