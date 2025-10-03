@@ -1,0 +1,89 @@
+name: Build, Push, and Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+# Prevent overlapping builds
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-push:
+    name: Build and Push to ECR
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    outputs:
+      IMAGE_TAG: ${{ steps.build-and-push.outputs.IMAGE_TAG }}
+      IMAGE_NAME: ${{ steps.build-and-push.outputs.IMAGE_NAME }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get environment configuration
+        id: config
+        uses: ./.github/workflows/shared/get-config
+        with:
+          env: prod
+
+      - name: Build and push to ECR
+        id: build-and-push
+        uses: ./.github/workflows/shared/build-and-push
+        with:
+          env: prod
+          aws_account_id: ${{ steps.config.outputs.aws_account_id }}
+          ecr_registry: ${{ steps.config.outputs.ecr_registry }}
+          ecr_repo_name: ${{ steps.config.outputs.ecr_repo }}
+          working_directory: .
+          build_context: .
+          platforms: linux/arm64
+
+  deploy:
+    name: Deploy to ECS
+    runs-on: ubuntu-latest
+    needs: [build-and-push]
+    environment: prod
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get environment configuration
+        id: config
+        uses: ./.github/workflows/shared/get-config
+        with:
+          env: prod
+
+      - name: Authenticate to Tailscale
+        uses: ./.github/workflows/shared/authenticate-to-tailscale
+        with:
+          oauth_client_id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth_secret: ${{ secrets.TS_OAUTH_SECRET }}
+
+      - name: Deploy to ECS
+        uses: ./.github/workflows/shared/deploy-to-ecs
+        with:
+          aws_account_id: ${{ steps.config.outputs.aws_account_id }}
+          aws_role_name: ${{ steps.config.outputs.role_name }}
+          cluster_name: ${{ steps.config.outputs.cluster_name }}
+          database_url: ${{ secrets.DATABASE_URL }}
+          ecs_config_path: ./ecs/
+          env: prod
+          image_name: ${{ needs.build-and-push.outputs.IMAGE_NAME }}
+          image_tag: ${{ needs.build-and-push.outputs.IMAGE_TAG }}
+          migration_cmd: pnpm db:migrate
+          service_name: ${{ steps.config.outputs.service_name }}
+          working_directory: .
+          timeout_minutes: "15"

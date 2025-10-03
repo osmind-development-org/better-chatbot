@@ -1,0 +1,165 @@
+{
+  "containerDefinitions": [
+    {
+      "cpu": 1024,
+      "dockerLabels": {
+        "com.datadoghq.tags.env": "prod",
+        "com.datadoghq.tags.service": "better-chat",
+        "com.datadoghq.tags.version": "latest"
+      },
+      "environment": [
+        {
+          "name": "BETTER_AUTH_URL",
+          "value": "https://chat.osmind.org"
+        },
+        {
+          "name": "BETTER_AUTH_TELEMETRY",
+          "value": "0"
+        },
+        {
+          "name": "DISABLE_EMAIL_SIGN_IN",
+          "value": "1"
+        },
+        {
+          "name": "DISABLE_SIGN_UP",
+          "value": "1"
+        }
+      ],
+      "essential": true,
+      "image": "525896657660.dkr.ecr.us-west-2.amazonaws.com/better-chat:latest",
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/better-chat-prod",
+          "awslogs-region": "us-west-2",
+          "awslogs-stream-prefix": "server"
+        }
+      },
+      "memory": 3072,
+      "mountPoints": [],
+      "name": "server",
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "name": "better-chat",
+          "protocol": "tcp"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "POSTGRES_URL",
+          "valueFrom": "arn:aws:secretsmanager:us-west-2:525896657660:secret:prod/tools/better-chat-7wkImg:POSTGRES_URL::"
+        },
+        {
+          "name": "OPENAI_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-west-2:525896657660:secret:prod/tools/better-chat-7wkImg:OPENAI_API_KEY::"
+        },
+        {
+          "name": "ANTHROPIC_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-west-2:525896657660:secret:prod/tools/better-chat-7wkImg:ANTHROPIC_API_KEY::"
+        },
+        {
+          "name": "GOOGLE_GENERATIVE_AI_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-west-2:525896657660:secret:prod/tools/better-chat-7wkImg:GOOGLE_GENERATIVE_AI_API_KEY::"
+        },
+        {
+          "name": "AUTH_SECRET",
+          "valueFrom": "arn:aws:secretsmanager:us-west-2:525896657660:secret:prod/tools/better-chat-7wkImg:AUTH_SECRET::"
+        },
+        {
+          "name": "GOOGLE_CLIENT_ID",
+          "valueFrom": "arn:aws:secretsmanager:us-west-2:525896657660:secret:prod/tools/better-chat-7wkImg:GOOGLE_CLIENT_ID::"
+        },
+        {
+          "name": "GOOGLE_CLIENT_SECRET",
+          "valueFrom": "arn:aws:secretsmanager:us-west-2:525896657660:secret:prod/tools/better-chat-7wkImg:GOOGLE_CLIENT_SECRET::"
+        }
+      ],
+      "volumesFrom": []
+    },
+    {
+      "cpu": 256,
+      "environment": [
+        {
+          "name": "DD_CONTAINER_EXCLUDE",
+          "value": "name:datadog-agent"
+        },
+        {
+          "name": "DD_LOGS_ENABLED",
+          "value": "true"
+        },
+        {
+          "name": "DD_SITE",
+          "value": "datadoghq.com"
+        },
+        {
+          "name": "ECS_FARGATE",
+          "value": "true"
+        },
+        {
+          "name": "DD_APM_ENABLED",
+          "value": "true"
+        },
+        {
+          "name": "DD_APM_NON_LOCAL_TRAFFIC",
+          "value": "true"
+        },
+        {
+          "name": "DD_DOGSTATSD_NON_LOCAL_TRAFFIC",
+          "value": "true"
+        },
+        {
+          "name": "DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL",
+          "value": "true"
+        },
+        {
+          "name": "DD_ENV",
+          "value": "prod"
+        },
+        {
+          "name": "DD_SERVICE",
+          "value": "better-chat"
+        }
+      ],
+      "essential": false,
+      "image": "public.ecr.aws/datadog/agent:7.67.0",
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/better-chat-prod",
+          "awslogs-region": "us-west-2",
+          "awslogs-stream-prefix": "datadog-agent"
+        }
+      },
+      "memory": 512,
+      "mountPoints": [],
+      "name": "datadog-agent",
+      "portMappings": [
+        {
+          "containerPort": 8126,
+          "name": "apm",
+          "protocol": "tcp"
+        },
+        {
+          "containerPort": 8125,
+          "name": "dogstatsd",
+          "protocol": "udp"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "DD_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-west-2:525896657660:secret:datadog/api-key/prod-HJ0rw8"
+        }
+      ],
+      "volumesFrom": []
+    }
+  ],
+  "cpu": "2048",
+  "executionRoleArn": "arn:aws:iam::525896657660:role/better-chat-prod-execution-role",
+  "family": "better-chat",
+  "memory": "4096",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "taskRoleArn": "arn:aws:iam::525896657660:role/better-chat-prod-task-role"
+}
