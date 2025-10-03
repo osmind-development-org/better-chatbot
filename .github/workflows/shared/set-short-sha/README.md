@@ -23,10 +23,3 @@ This action extracts the first 7 characters from the current Git commit SHA and 
   run: |
     echo "Short SHA: ${{ steps.short_sha.outputs.SHORT_SHA }}"
 ```
-
-## Use Cases
-
-- Docker image tagging
-- Deployment tracking
-- Artifact naming
-- Version identification in CI/CD pipelines

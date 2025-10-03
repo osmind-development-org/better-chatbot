@@ -25,19 +25,6 @@ This action handles the complete deployment process including AWS authentication
 | `migration_cmd`     | ❌       |           | Migration command to execute              |
 | `timeout_minutes`   | ❌       | "15"      | Timeout in minutes for ECS service update |
 
-## Process
-
-1. **Configure AWS Credentials**: Sets up AWS authentication using OIDC
-2. **Setup Node.js**: Configures Node.js with dependency caching
-3. **Set Environment Variables**: Configures deployment environment
-4. **Validate Deployment Scripts**: Checks for required deployment scripts
-5. **Install Dependencies**: Runs `npm ci --only=production`
-6. **Build Task Definition**: Creates and registers new ECS task definition
-7. **Run Migrations** (conditional): Executes database migrations if `database_url` provided
-8. **Update ECS Service**: Deploys new task definition to ECS
-9. **Deregister Old Task Definition** (conditional): Cleans up previous task definitions on main/develop branches only
-10. **Update SSM Parameter**: Updates the current image tag in SSM Parameter Store
-
 ## Example Usage
 
 ### Basic Deployment (No Migrations)
@@ -99,23 +86,8 @@ This action handles the complete deployment process including AWS authentication
 
 The action includes integrated database migration support:
 
-### When Migrations Run
-
 - Migrations only execute if `database_url` is provided
 - Requires secure network connectivity (e.g., via Tailscale) to be established before running this action
-
-### Migration Process
-
-1. **Migration Execution**: Runs `./deploy-scripts/run-migrations.sh --env "{env}" --database-url "{database_url}" --migration-cmd "{migration_cmd}"`
-
-### Migration Script Requirements
-
-Your migration script should:
-
-- Accept environment, database URL, and migration command as parameters
-- Handle connection errors gracefully
-- Provide appropriate logging
-- Exit with proper status codes
 
 ## Task Definition Cleanup
 
@@ -143,17 +115,6 @@ The action assumes an IAM role with the following permissions:
 - CloudWatch logging
 - SSM parameter read/write access
 - Any additional permissions required by your application
-
-## Features
-
-- **Conditional Migrations**: Only runs migrations when database URL provided
-- **Dependency Caching**: Leverages Node.js cache for faster installs
-- **Production Dependencies**: Only installs production packages
-- **Environment Flexibility**: Works with any environment configuration
-- **Error Handling**: Comprehensive error handling and logging
-- **Script Validation**: Validates required deployment scripts exist before execution
-- **Branch-Aware Cleanup**: Only cleans up old task definitions on main branches
-- **Version Tracking**: Updates SSM parameters with current deployment info
 
 ## Script Dependencies
 
@@ -192,32 +153,3 @@ The action sets the following environment variables for your scripts:
 - `ENV`: Target environment
 - `IMAGE_TAG`: Docker image tag being deployed
 - `GITHUB_WORKSPACE`: GitHub Actions workspace path
-
-## Troubleshooting
-
-Common issues and solutions:
-
-### AWS Authentication Errors
-
-- Verify IAM role exists and has correct trust policy
-- Check that `aws_account_id` matches the role's account
-
-### Migration Failures
-
-- Ensure database URL is accessible from GitHub Actions
-- Verify Tailscale OAuth credentials are correct
-- Check migration script permissions and syntax
-- Ensure `migration_cmd` parameter is provided when using migrations
-
-### ECS Deployment Issues
-
-- Verify ECS cluster and service exist
-- Check that task definition builds successfully
-- Ensure ECR image exists and is accessible
-- Verify service name matches expected pattern (`{service_name}-{env}`)
-
-### Script Validation Errors
-
-- Ensure all required deployment scripts exist in the repository
-- Check script permissions (should be executable)
-- Verify script paths relative to repository root

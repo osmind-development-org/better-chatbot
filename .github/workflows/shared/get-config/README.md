@@ -39,13 +39,3 @@ This action provides centralized configuration management for the production dep
     echo "ECR Registry: ${{ steps.config.outputs.ecr_registry }}"
     echo "Cluster: ${{ steps.config.outputs.cluster_name }}"
 ```
-
-## Configuration
-
-The action contains production environment configuration that needs to be customized for your AWS setup. Edit the `action.yml` file and replace these placeholder values:
-
-- `AWS_ACCOUNT_ID`: Your AWS account ID
-- `ECR_REPO`: Your ECR repository name (default: "better-chatbot")
-- `CLUSTER_NAME`: Your ECS cluster name (default: "production-cluster")
-- `SERVICE_NAME`: Your ECS service name (default: "better-chatbot")
-- `ROLE_NAME`: Your IAM role name for deployment (default: "github-action-deploy-app")
