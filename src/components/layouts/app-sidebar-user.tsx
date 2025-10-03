@@ -1,46 +1,45 @@
 "use client";
 
-import {
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenu,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-  DropdownMenuPortal,
-  DropdownMenuSubContent,
-  DropdownMenuCheckboxItem,
-} from "ui/dropdown-menu";
-import { AvatarFallback, AvatarImage, Avatar } from "ui/avatar";
-import { SidebarMenuButton, SidebarMenuItem, SidebarMenu } from "ui/sidebar";
-import {
-  ChevronsUpDown,
-  Command,
-  LogOutIcon,
-  Settings2,
-  Palette,
-  Languages,
-  Sun,
-  MoonStar,
-  ChevronRight,
-  Settings,
-} from "lucide-react";
-import { useTheme } from "next-themes";
 import { appStore } from "@/app/store";
+import { UserAvatar } from "@/components/user-avatar";
+import { useThemeStyle } from "@/hooks/use-theme-style";
+import { getLocaleAction } from "@/i18n/get-locale";
+import { BasicUser } from "app-types/user";
+import { authClient } from "auth/client";
 import { BASE_THEMES, COOKIE_KEY_LOCALE, SUPPORTED_LOCALES } from "lib/const";
 import { capitalizeFirstLetter, cn, fetcher } from "lib/utils";
-import { authClient } from "auth/client";
+import {
+  ChevronRight,
+  ChevronsUpDown,
+  Command,
+  Languages,
+  LogOutIcon,
+  MoonStar,
+  Palette,
+  Settings,
+  Settings2,
+  Sun,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
-import useSWR from "swr";
-import { getLocaleAction } from "@/i18n/get-locale";
+import { useTheme } from "next-themes";
 import { Suspense, useCallback } from "react";
-import { GithubIcon } from "ui/github-icon";
+import useSWR from "swr";
 import { DiscordIcon } from "ui/discord-icon";
-import { useThemeStyle } from "@/hooks/use-theme-style";
-import { BasicUser } from "app-types/user";
-import { getUserAvatar } from "lib/user/utils";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "ui/dropdown-menu";
+import { GithubIcon } from "ui/github-icon";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "ui/sidebar";
 import { Skeleton } from "ui/skeleton";
 
 export function AppSidebarUserInner(props: {
@@ -74,14 +73,12 @@ export function AppSidebarUserInner(props: {
               size={"lg"}
               data-testid="sidebar-user-button"
             >
-              <Avatar className="rounded-full size-8 border">
-                <AvatarImage
-                  className="object-cover"
-                  src={getUserAvatar(user)}
-                  alt={user?.name || "User"}
-                />
-                <AvatarFallback>{user?.name?.slice(0, 1) || ""}</AvatarFallback>
-              </Avatar>
+              <UserAvatar
+                user={user}
+                size={32}
+                className="border"
+                showGravatarTooltip
+              />
               <span className="truncate" data-testid="sidebar-user-email">
                 {user?.email}
               </span>
@@ -95,15 +92,7 @@ export function AppSidebarUserInner(props: {
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-full">
-                  <AvatarImage
-                    src={getUserAvatar(user)}
-                    alt={user?.name || "User"}
-                  />
-                  <AvatarFallback className="rounded-lg">
-                    {user?.name?.slice(0, 1) || ""}
-                  </AvatarFallback>
-                </Avatar>
+                <UserAvatar user={user} size={32} showGravatarTooltip />
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span
                     className="truncate font-medium"
