@@ -99,7 +99,7 @@ runs:
     - name: Install dependencies
       shell: bash
       working-directory: ${{ inputs.working_directory }}
-      run: pnpm install --frozen-lockfile --prod
+      run: pnpm install --frozen-lockfile --prod --ignore-scripts
 
     - name: Register new task definitions
       shell: bash

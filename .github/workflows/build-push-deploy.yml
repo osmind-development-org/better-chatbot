@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - mgk/plt-762-set-up-github-actions-for-this-project-v2
   workflow_dispatch:
 
 # Prevent overlapping builds
