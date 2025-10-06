@@ -23,7 +23,7 @@ The project supports two storage backends:
 
 ```ini
 # Storage driver selection (defaults to vercel-blob)
-FILE_STORAGE_TYPE=vercel-blob # or s3 (coming soon)
+FILE_STORAGE_TYPE=vercel-blob # or s3
 
 # Optional: Subdirectory prefix for organizing files
 FILE_STORAGE_PREFIX=uploads
