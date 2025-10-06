@@ -16,7 +16,19 @@ export function createDbBasedMCPConfigsStorage(): MCPConfigStorage {
     init,
     async loadAll() {
       try {
-        const servers = await mcpRepository.selectAll();
+        logger.info("Querying database for MCP configurations...");
+        const servers = await Promise.race([
+          mcpRepository.selectAll(),
+          new Promise<never>((_, reject) =>
+            setTimeout(
+              () => reject(new Error("Database query timeout")),
+              10000,
+            ),
+          ),
+        ]);
+        logger.info(
+          `Database query successful, found ${servers.length} configs`,
+        );
         return servers;
       } catch (error) {
         logger.error("Failed to load MCP configs from database:", error);

@@ -9,6 +9,14 @@ import { z } from "zod";
 export const MCPRemoteConfigZodSchema = z.object({
   url: z.string().url().describe("The URL of the SSE endpoint"),
   headers: z.record(z.string(), z.string()).optional(),
+  oauth: z
+    .object({
+      clientId: z.string().describe("Pre-registered OAuth client ID"),
+      clientSecret: z.string().describe("Pre-registered OAuth client secret"),
+      scopes: z.string().optional().describe("OAuth scopes (space-separated)"),
+    })
+    .optional()
+    .describe("Static OAuth credentials for pre-registered clients"),
 });
 
 export const MCPStdioConfigZodSchema = z.object({

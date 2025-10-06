@@ -88,15 +88,19 @@ export class MCPClientsManager {
     return safe(() => this.initializedLock.lock())
       .ifOk(async () => {
         if (this.storage) {
+          this.logger.info("Initializing storage...");
           await this.storage.init(this);
+          this.logger.info("Storage initialized, loading configurations...");
           const configs = await this.storage.loadAll();
-          await Promise.all(
+          this.logger.info(`Loaded ${configs.length} MCP configurations`);
+          // Initialize clients in the background to avoid blocking startup
+          // Connections will be established lazily when first needed
+          void Promise.allSettled(
             configs.map(({ id, name, config }) =>
-              this.addClient(id, name, config).catch(() => {
-                `ignore error`;
-              }),
+              this.addClientBackground(id, name, config),
             ),
           );
+          this.logger.info("MCP manager initialization completed");
         }
       })
       .watch(() => {
@@ -161,6 +165,32 @@ export class MCPClientsManager {
     });
     this.clients.set(id, { client, name });
     return client.connect();
+  }
+
+  /**
+   * Creates and adds a client instance with background connection (non-blocking)
+   */
+  private async addClientBackground(
+    id: string,
+    name: string,
+    serverConfig: MCPServerConfig,
+  ) {
+    if (this.clients.has(id)) {
+      const prevClient = this.clients.get(id)!;
+      void prevClient.client.disconnect();
+    }
+    const client = createMCPClient(id, name, serverConfig, {
+      autoDisconnectSeconds: this.autoDisconnectSeconds,
+    });
+    this.clients.set(id, { client, name });
+
+    // Connect in background with timeout and error handling
+    client.connect().catch((error) => {
+      this.logger.warn(
+        `Failed to connect to MCP server ${name} (${id}):`,
+        error,
+      );
+    });
   }
 
   /**
