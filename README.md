@@ -322,11 +322,12 @@ FILE_STORAGE_TYPE=vercel-blob
 FILE_STORAGE_PREFIX=uploads
 BLOB_READ_WRITE_TOKEN=
 
-# -- S3 (coming soon) --
+# -- S3 (AWS deployments) --
 # FILE_STORAGE_TYPE=s3
 # FILE_STORAGE_PREFIX=uploads
-# FILE_STORAGE_S3_BUCKET=
-# FILE_STORAGE_S3_REGION=
+# FILE_STORAGE_S3_BUCKET=your-bucket-name
+# FILE_STORAGE_S3_REGION=us-east-1
+# AWS_PROFILE=your-profile  # For local dev with ~/.aws/credentials
 
 # (Optional)
 # === OAuth Settings ===
@@ -378,7 +379,7 @@ Step-by-step setup guides for running and configuring better-chatbot.
 
 #### [🗂️ File Storage Drivers](./docs/tips-guides/file-storage.md)
 
-- Cloud-based file storage with Vercel Blob (default) for seamless uploads in both development and production. S3 support coming soon.
+- Cloud-based file storage with **Vercel Blob** (default) for seamless uploads in both development and production, or **Amazon S3** for AWS deployments with IAM role support.
 
 #### [🎯 System Prompts & Chat Customization](./docs/tips-guides/system-prompts-and-customization.md)
 
