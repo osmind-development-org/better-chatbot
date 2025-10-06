@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.4
-FROM node:23-alpine AS base
+FROM node:24-alpine AS base
 # Install pnpm globally to avoid repeated corepack enable calls
 RUN corepack enable pnpm
 
