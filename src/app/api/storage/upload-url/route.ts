@@ -107,9 +107,13 @@ async function handleGenericUpload(request: GenericUploadRequest) {
     return NextResponse.json(createFallbackResponse());
   }
 
+  // Get the public source URL for the key (will be used after upload completes)
+  const sourceUrl = await serverFileStorage.getSourceUrl(uploadUrl.key);
+
   return NextResponse.json({
     directUploadSupported: true,
     ...uploadUrl,
+    sourceUrl, // Public URL to use after upload completes
   });
 }
 
@@ -118,7 +122,7 @@ async function handleGenericUpload(request: GenericUploadRequest) {
  *
  * Provides optimal upload method based on storage backend:
  * - Vercel Blob: Client token for direct upload
- * - S3: Presigned URL (future)
+ * - S3: Presigned URL for direct client upload
  * - Local FS: Fallback to server upload
  */
 export async function POST(request: Request) {

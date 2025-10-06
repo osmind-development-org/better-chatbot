@@ -12,8 +12,8 @@ Files are stored with **public access** by default, making them accessible via U
 
 The project supports two storage backends:
 
-- **Vercel Blob** - Default for all deployments (recommended)
-- **S3** - Planned for AWS/S3-compatible storage
+- **Vercel Blob** - Default for all deployments (recommended for Vercel/non-AWS)
+- **S3** - AWS S3 and S3-compatible storage (MinIO, DigitalOcean Spaces, etc.)
 
 **Vercel Blob** is the default storage driver and works seamlessly in both local development and production environments.
 
@@ -32,11 +32,14 @@ FILE_STORAGE_PREFIX=uploads
 BLOB_READ_WRITE_TOKEN=<auto on Vercel>
 VERCEL_BLOB_CALLBACK_URL= # Optional: For local webhook testing with ngrok
 
-# === S3 (FILE_STORAGE_TYPE=s3, not yet implemented) ===
-# FILE_STORAGE_S3_BUCKET=
-# FILE_STORAGE_S3_REGION=
-# AWS_ACCESS_KEY_ID=
-# AWS_SECRET_ACCESS_KEY=
+# === S3 (FILE_STORAGE_TYPE=s3) ===
+FILE_STORAGE_S3_BUCKET=your-bucket-name
+FILE_STORAGE_S3_REGION=us-east-1  # Optional, defaults to us-east-1
+
+# Credentials (only needed if NOT running in AWS with IAM roles)
+# When running on ECS/EC2/Lambda, IAM roles are automatically used
+# For local dev, use ~/.aws/credentials file instead of env vars:
+# AWS_PROFILE=your-profile-name  # Optional: use a named profile
 ```
 
 ### Quick Start with Vercel Blob
@@ -54,12 +57,115 @@ vercel env pull
 
 That's it! File uploads will now work seamlessly in both development and production.
 
+### Quick Start with S3
+
+S3 automatically uses IAM roles when running in AWS (ECS, EC2, Lambda). For local development or non-AWS environments, you'll need access keys.
+
+#### Running in AWS (Production)
+
+1. Create an S3 bucket and configure it for public access (if needed)
+2. Attach an IAM role to your ECS task/EC2 instance/Lambda with S3 permissions:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject",
+        "s3:HeadObject",
+        "s3:PutObjectAcl"
+      ],
+      "Resource": "arn:aws:s3:::your-bucket-name/*"
+    }
+  ]
+}
+```
+
+3. Set environment variables:
+
+```bash
+FILE_STORAGE_TYPE=s3
+FILE_STORAGE_S3_BUCKET=your-bucket-name
+FILE_STORAGE_S3_REGION=us-east-1
+```
+
+No access keys needed! The AWS SDK automatically uses the IAM role.
+
+4. **Important**: Configure your S3 bucket for public access and CORS:
+
+**Bucket Policy** (for public read access):
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PublicReadGetObject",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::your-bucket-name/*"
+    }
+  ]
+}
+```
+
+**CORS Configuration** (for client-side uploads):
+
+```json
+[
+  {
+    "AllowedHeaders": ["*"],
+    "AllowedMethods": ["GET", "PUT", "POST", "DELETE"],
+    "AllowedOrigins": ["https://yourdomain.com", "http://localhost:3000"],
+    "ExposeHeaders": ["ETag"],
+    "MaxAgeSeconds": 3000
+  }
+]
+```
+
+#### Local Development
+
+For local development, use AWS credentials file and profiles:
+
+1. Create an IAM user with the same S3 permissions above
+2. Generate access keys
+3. Configure your AWS credentials file (`~/.aws/credentials`):
+
+```ini
+[default]
+aws_access_key_id = your-access-key
+aws_secret_access_key = your-secret-key
+
+# Or use a named profile
+[your-profile-name]
+aws_access_key_id = your-access-key
+aws_secret_access_key = your-secret-key
+```
+
+4. Set environment variables:
+
+```bash
+FILE_STORAGE_TYPE=s3
+FILE_STORAGE_S3_BUCKET=your-bucket-name
+FILE_STORAGE_S3_REGION=us-east-1
+
+# Optional: Use a named profile instead of [default]
+AWS_PROFILE=your-profile-name
+```
+
+The AWS SDK will automatically read credentials from `~/.aws/credentials`. No need for `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables!
+
 ## Client Upload
 
 The `useFileUpload` hook **automatically selects the optimal upload method** based on your storage backend:
 
 - **Vercel Blob**: Direct browser → CDN upload (fastest, default)
-- **S3**: Presigned URL upload (when implemented)
+- **S3**: Presigned URL upload (direct browser → S3)
 
 ```tsx
 "use client";
@@ -108,6 +214,28 @@ sequenceDiagram
   Note over UploadURL: Optional: Save to DB
 ```
 
+#### S3 (Presigned URL Upload)
+
+```mermaid
+sequenceDiagram
+  participant Browser
+  participant UploadURL as /api/storage/upload-url
+  participant S3 as Amazon S3
+  participant Confirm as /api/storage/confirm-upload
+
+  Browser->>UploadURL: POST (request presigned URL)
+  Note over Browser,UploadURL: User authenticated
+  UploadURL->>S3: Generate presigned URL
+  Note over UploadURL,S3: Uses IAM role (no keys needed in AWS)
+  S3-->>UploadURL: Return presigned URL
+  UploadURL-->>Browser: Return presigned URL + public URL
+  Browser->>S3: PUT file (with presigned URL)
+  S3-->>Browser: Upload complete (200 OK)
+  Browser->>Confirm: POST (confirm upload)
+  Note over Confirm: Save to DB, send notifications
+  Confirm-->>Browser: Confirmed
+```
+
 ### Features
 
 - ✅ **Cloud-Based Storage**: Vercel Blob provides globally distributed CDN
@@ -133,7 +261,9 @@ const result = await serverFileStorage.upload(buffer, {
 console.log("Public URL:", result.sourceUrl);
 ```
 
-## Upload Completion Webhook
+## Upload Completion Tracking
+
+### Vercel Blob (Webhook)
 
 The `/api/storage/upload-url` endpoint handles the `onUploadCompleted` webhook from Vercel Blob. You can add custom logic here:
 
@@ -156,6 +286,37 @@ onUploadCompleted: async ({ blob, tokenPayload }) => {
   // await sendNotification(userId, "File uploaded!");
 };
 ```
+
+### S3 (Client Callback)
+
+Since S3 doesn't have built-in webhooks like Vercel Blob, the client automatically calls `/api/storage/confirm-upload` after successful upload. You can add custom logic here:
+
+```ts
+// src/app/api/storage/confirm-upload/route.ts
+
+export async function POST(request: Request) {
+  const session = await getSession();
+  const body = await request.json();
+
+  // Save to database
+  await db.files.create({
+    userId: session.user.id,
+    key: body.key,
+    url: body.url,
+    filename: body.filename,
+    contentType: body.contentType,
+    size: body.size,
+    uploadedAt: new Date(),
+  });
+
+  // Send notification
+  // await sendNotification(session.user.id, "File uploaded!");
+
+  return NextResponse.json({ success: true });
+}
+```
+
+**Note**: The client callback approach means uploads can succeed without confirmation if the client closes/crashes. For mission-critical tracking, consider S3 Event Notifications → SNS → Lambda.
 
 ## Advanced
 
@@ -193,14 +354,16 @@ The `FileStorage` interface provides:
 
 ### Storage Comparison
 
-| Feature              | Vercel Blob         | S3 (Planned)       |
-| -------------------- | ------------------- | ------------------ |
-| Direct Client Upload | ✅ Yes              | ✅ Yes (presigned) |
-| CDN                  | ✅ Global           | Configurable       |
-| Cost                 | Pay-as-you-go       | Pay-as-you-go      |
-| Best For             | All deployments     | AWS ecosystem      |
-| Setup Complexity     | Minimal             | Moderate           |
-| Local Development    | ✅ Works with token | ✅ Works           |
+| Feature              | Vercel Blob         | S3                          |
+| -------------------- | ------------------- | --------------------------- |
+| Direct Client Upload | ✅ Yes              | ✅ Yes (presigned URLs)     |
+| CDN                  | ✅ Global           | ✅ CloudFront (optional)    |
+| Cost                 | Pay-as-you-go       | Pay-as-you-go               |
+| Best For             | Vercel deployments  | AWS/self-hosted             |
+| Setup Complexity     | Minimal             | Moderate                    |
+| Local Development    | ✅ Works with token | ✅ Works (credentials file) |
+| IAM Role Support     | N/A                 | ✅ Yes                      |
+| Upload Tracking      | ✅ Webhook          | 🟡 Client callback          |
 
 ## Why Not Local Filesystem?
 

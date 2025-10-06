@@ -47,8 +47,8 @@ function useStorageInfo() {
  * Hook for uploading files to storage.
  *
  * Automatically uses the optimal upload method based on storage backend:
- * - Vercel Blob: Direct upload from browser (fast)
- * - S3: Presigned URL (future)
+ * - Vercel Blob: Direct upload from browser (fastest, via @vercel/blob/client)
+ * - S3: Presigned URL upload (direct browser → S3)
  * - Local FS: Server upload (fallback)
  *
  * @example
@@ -111,7 +111,7 @@ export function useFileUpload() {
           };
         }
 
-        // S3 or other direct upload (future)
+        // S3 presigned URL upload
         if (supportsDirectUpload && storageType === "s3") {
           // Request presigned URL
           const uploadUrlResponse = await fetch("/api/storage/upload-url", {
@@ -149,9 +149,30 @@ export function useFileUpload() {
             return;
           }
 
+          // Use the public source URL (non-expiring) instead of the presigned URL (expiring)
+          const publicUrl = uploadUrlData.sourceUrl || uploadUrlData.url;
+
+          // Confirm upload completion with the server (for DB storage, notifications, etc.)
+          try {
+            await fetch("/api/storage/confirm-upload", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                key: uploadUrlData.key,
+                url: publicUrl,
+                contentType,
+                size: file.size,
+                filename,
+              }),
+            });
+          } catch (error) {
+            // Don't fail the upload if confirmation fails
+            console.error("Failed to confirm upload:", error);
+          }
+
           return {
             pathname: uploadUrlData.key,
-            url: uploadUrlData.url,
+            url: publicUrl,
             contentType,
             size: file.size,
           };
