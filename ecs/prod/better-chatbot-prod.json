@@ -161,5 +161,9 @@
   "memory": "4096",
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
+  "runtimePlatform": {
+    "cpuArchitecture": "ARM64",
+    "operatingSystemFamily": "LINUX"
+  },
   "taskRoleArn": "arn:aws:iam::525896657660:role/ecs-task-runtime-better-chatbot-prod"
 }
