@@ -30,7 +30,7 @@
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/better-chatbot",
+          "awslogs-group": "/ecs/better-chatbot-prod",
           "awslogs-region": "us-west-2",
           "awslogs-stream-prefix": "server"
         }
@@ -157,7 +157,7 @@
   ],
   "cpu": "2048",
   "executionRoleArn": "arn:aws:iam::525896657660:role/ecs-task-exec-better-chat-prod",
-  "family": "better-chatbot",
+  "family": "better-chatbot-prod",
   "memory": "4096",
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
