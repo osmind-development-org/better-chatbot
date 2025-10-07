@@ -4,7 +4,7 @@
       "cpu": 1024,
       "dockerLabels": {
         "com.datadoghq.tags.env": "prod",
-        "com.datadoghq.tags.service": "better-chat",
+        "com.datadoghq.tags.service": "better-chatbot",
         "com.datadoghq.tags.version": "latest"
       },
       "environment": [
@@ -26,11 +26,11 @@
         }
       ],
       "essential": true,
-      "image": "525896657660.dkr.ecr.us-west-2.amazonaws.com/better-chat:latest",
+      "image": "525896657660.dkr.ecr.us-west-2.amazonaws.com/better-chatbot:latest",
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/better-chat-prod",
+          "awslogs-group": "/ecs/better-chatbot",
           "awslogs-region": "us-west-2",
           "awslogs-stream-prefix": "server"
         }
@@ -41,7 +41,7 @@
       "portMappings": [
         {
           "containerPort": 3000,
-          "name": "better-chat",
+          "name": "better-chatbot",
           "protocol": "tcp"
         }
       ],
@@ -118,7 +118,7 @@
         },
         {
           "name": "DD_SERVICE",
-          "value": "better-chat"
+          "value": "better-chatbot"
         }
       ],
       "essential": false,
@@ -126,7 +126,7 @@
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/better-chat-prod",
+          "awslogs-group": "/ecs/better-chatbot-prod",
           "awslogs-region": "us-west-2",
           "awslogs-stream-prefix": "datadog-agent"
         }
@@ -156,10 +156,10 @@
     }
   ],
   "cpu": "2048",
-  "executionRoleArn": "arn:aws:iam::525896657660:role/better-chat-prod-execution-role",
-  "family": "better-chat",
+  "executionRoleArn": "arn:aws:iam::525896657660:role/better-chatbot-prod-execution-role",
+  "family": "better-chatbot",
   "memory": "4096",
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
-  "taskRoleArn": "arn:aws:iam::525896657660:role/better-chat-prod-task-role"
+  "taskRoleArn": "arn:aws:iam::525896657660:role/better-chatbot-prod-task-role"
 }

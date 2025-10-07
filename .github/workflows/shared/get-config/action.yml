@@ -41,9 +41,9 @@ runs:
         echo "aws_region=$AWS_REGION" >> $GITHUB_OUTPUT
 
         AWS_ACCOUNT_ID="525896657660"
-        ECR_REPO="better-chat"
+        ECR_REPO="better-chatbot"
         CLUSTER_NAME="tools-prod"
-        SERVICE_NAME="better-chat"
+        SERVICE_NAME="better-chatbot"
         ROLE_NAME="github-action-deploy-better-chatbot"
 
         ECR_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
