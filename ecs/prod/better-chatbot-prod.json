@@ -30,7 +30,7 @@
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/better-chatbot-prod",
+          "awslogs-group": "/ecs/tools-prod/better-chatbot-prod",
           "awslogs-region": "us-west-2",
           "awslogs-stream-prefix": "server"
         }
@@ -126,7 +126,7 @@
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/better-chatbot",
+          "awslogs-group": "/ecs/tools-prod/better-chatbot-prod",
           "awslogs-region": "us-west-2",
           "awslogs-stream-prefix": "datadog-agent"
         }
