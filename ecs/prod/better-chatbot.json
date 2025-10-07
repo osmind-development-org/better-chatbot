@@ -156,10 +156,10 @@
     }
   ],
   "cpu": "2048",
-  "executionRoleArn": "arn:aws:iam::525896657660:role/better-chatbot-prod-execution-role",
+  "executionRoleArn": "arn:aws:iam::525896657660:role/ecs-task-exec-better-chat-prod",
   "family": "better-chatbot",
   "memory": "4096",
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
-  "taskRoleArn": "arn:aws:iam::525896657660:role/better-chatbot-prod-task-role"
+  "taskRoleArn": "arn:aws:iam::525896657660:role/ecs-task-runtime-better-chat-prod"
 }

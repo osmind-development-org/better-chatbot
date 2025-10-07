@@ -44,7 +44,7 @@ runs:
         ECR_REPO="better-chatbot"
         CLUSTER_NAME="tools-prod"
         SERVICE_NAME="better-chatbot"
-        ROLE_NAME="deploy-better-chatbot"
+        ROLE_NAME="github-action-deploy-better-chatbot"
 
         ECR_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
 
