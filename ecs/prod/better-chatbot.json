@@ -26,11 +26,11 @@
         }
       ],
       "essential": true,
-      "image": "525896657660.dkr.ecr.us-west-2.amazonaws.com/better-chatbot:latest",
+      "image": "525896657660.dkr.ecr.us-west-2.amazonaws.com/better-chatbot-prod:latest",
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/better-chatbot",
+          "awslogs-group": "/ecs/better-chatbot-prod",
           "awslogs-region": "us-west-2",
           "awslogs-stream-prefix": "server"
         }
@@ -41,7 +41,7 @@
       "portMappings": [
         {
           "containerPort": 3000,
-          "name": "better-chatbot",
+          "name": "better-chatbot-prod",
           "protocol": "tcp"
         }
       ],
@@ -118,7 +118,7 @@
         },
         {
           "name": "DD_SERVICE",
-          "value": "better-chatbot"
+          "value": "better-chatbot-prod"
         }
       ],
       "essential": false,
