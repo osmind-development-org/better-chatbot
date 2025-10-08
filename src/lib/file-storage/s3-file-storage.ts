@@ -91,17 +91,24 @@ const streamToBuffer = async (stream: ReadableStream): Promise<Buffer> => {
 };
 
 /**
- * Amazon S3 storage backend.
+ * Amazon S3 storage backend with PRIVATE file access.
  *
  * Features:
  * - Automatic credential resolution via AWS SDK credential chain (IAM roles, ~/.aws/credentials, etc.)
- * - Presigned URLs for direct client uploads
+ * - Presigned URLs for direct client uploads (temp URLs for upload)
+ * - Presigned URLs for file access (temp URLs for download, expire after 7 days)
+ * - No public access required - files are kept private
  * - Client callback for upload tracking (see /api/storage/confirm-upload)
  *
  * Environment variables:
  * - FILE_STORAGE_S3_BUCKET (required)
  * - FILE_STORAGE_S3_REGION (default: us-east-1)
  * - AWS_PROFILE (optional: for local dev with named AWS profiles)
+ *
+ * Security:
+ * - Files are NOT publicly accessible
+ * - Only authenticated users with valid AWS credentials can generate presigned URLs
+ * - Bucket policy should NOT grant public read access
  *
  * Local development: Use ~/.aws/credentials file instead of environment variables
  */
@@ -127,8 +134,7 @@ export const createS3FileStorage = (): FileStorage => {
         Key: key,
         Body: buffer,
         ContentType: contentType,
-        // Make files publicly accessible
-        ACL: "public-read",
+        // Public access is controlled by bucket policy, not ACLs
       });
 
       await s3.send(command);
@@ -164,7 +170,7 @@ export const createS3FileStorage = (): FileStorage => {
         Bucket: S3_BUCKET,
         Key: key,
         ContentType: contentType,
-        ACL: "public-read",
+        // Public access is controlled by bucket policy, not ACLs
       } satisfies PutObjectCommandInput);
 
       const url = await getSignedUrl(s3, command, {
@@ -290,10 +296,16 @@ export const createS3FileStorage = (): FileStorage => {
         );
       }
 
-      // For S3, the public URL is deterministic based on the key
-      // We don't need to verify the file exists since the URL is always valid
-      // (it will just 404 if the file doesn't exist)
-      return buildPublicUrl(key);
+      // Return presigned URL for private file access
+      // URLs expire after 7 days - suitable for chat uploads
+      const command = new GetObjectCommand({
+        Bucket: S3_BUCKET,
+        Key: key,
+      });
+
+      return await getSignedUrl(s3, command, {
+        expiresIn: 604800, // 7 days in seconds
+      });
     },
 
     async getDownloadUrl(key) {

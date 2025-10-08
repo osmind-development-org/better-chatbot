@@ -16,5 +16,10 @@ export async function register() {
       );
       await initMCPManager();
     }
+
+    // Initialize file storage (logs will appear at startup)
+    await import("./lib/file-storage").then(() => {
+      console.log("File storage module loaded");
+    });
   }
 }

@@ -107,13 +107,13 @@ async function handleGenericUpload(request: GenericUploadRequest) {
     return NextResponse.json(createFallbackResponse());
   }
 
-  // Get the public source URL for the key (will be used after upload completes)
+  // Get the source URL for the key (presigned URL for private files, or public URL for Vercel Blob)
   const sourceUrl = await serverFileStorage.getSourceUrl(uploadUrl.key);
 
   return NextResponse.json({
     directUploadSupported: true,
     ...uploadUrl,
-    sourceUrl, // Public URL to use after upload completes
+    sourceUrl, // URL to access the uploaded file (may be presigned with expiry)
   });
 }
 

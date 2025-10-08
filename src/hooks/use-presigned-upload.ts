@@ -138,19 +138,29 @@ export function useFileUpload() {
           const uploadUrlData = await uploadUrlResponse.json();
 
           // Upload to presigned URL
-          const uploadResponse = await fetch(uploadUrlData.url, {
-            method: uploadUrlData.method || "PUT",
-            headers: uploadUrlData.headers || { "Content-Type": contentType },
-            body: file,
-          });
-
-          if (!uploadResponse.ok) {
-            toast.error(`Upload failed: ${uploadResponse.status}`);
+          let uploadResponse: Response;
+          try {
+            uploadResponse = await fetch(uploadUrlData.url, {
+              method: uploadUrlData.method || "PUT",
+              headers: uploadUrlData.headers || { "Content-Type": contentType },
+              body: file,
+            });
+          } catch {
+            // Network errors (CORS, connection issues, etc.)
+            toast.error("Upload failed: Network error");
             return;
           }
 
-          // Use the public source URL (non-expiring) instead of the presigned URL (expiring)
-          const publicUrl = uploadUrlData.sourceUrl || uploadUrlData.url;
+          if (!uploadResponse.ok) {
+            toast.error(`Upload failed: ${uploadResponse.status}`, {
+              description: `S3 rejected the upload. Status: ${uploadResponse.statusText}`,
+              duration: 8000,
+            });
+            return;
+          }
+
+          // Use the source URL (presigned for private files, public for Vercel Blob)
+          const sourceUrl = uploadUrlData.sourceUrl || uploadUrlData.url;
 
           // Confirm upload completion with the server (for DB storage, notifications, etc.)
           try {
@@ -159,7 +169,7 @@ export function useFileUpload() {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 key: uploadUrlData.key,
-                url: publicUrl,
+                url: sourceUrl,
                 contentType,
                 size: file.size,
                 filename,
@@ -172,7 +182,7 @@ export function useFileUpload() {
 
           return {
             pathname: uploadUrlData.key,
-            url: publicUrl,
+            url: sourceUrl,
             contentType,
             size: file.size,
           };
