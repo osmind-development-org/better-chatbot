@@ -15,6 +15,7 @@ jobs:
   build-and-push:
     name: Build and Push to ECR
     runs-on: ubuntu-latest
+    environment: prod
 
     permissions:
       id-token: write
