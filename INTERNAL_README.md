@@ -4,7 +4,7 @@ I'm going to start keeping a log here with some notes and information about chan
 
 ## Staying up-to-date with upstream
 
-Currently, the best way to do this is a fairly manual process. What I did:
+Where possible, you should try to do this in a separate branch with no other changes. These can get big, and it could be hard to review. Currently, the best way to do this is a fairly manual process. What I did:
 
 1. Check out a new branch from main. Confirm you have the original repo as an upstream source:
 
@@ -33,7 +33,7 @@ Currently, the best way to do this is a fairly manual process. What I did:
 3. Rebase our changes onto the changes from the main upstream branch:
 
    ```
-   $ git rebase upstream/main
+   $ git merge upstream/main
    ```
 
    **IMPORTANT:** You might have to manually work through some merge conflicts here.
