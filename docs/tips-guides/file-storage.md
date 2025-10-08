@@ -6,7 +6,10 @@ This project supports **cloud-based file storage** for handling file uploads and
 
 ## Overview
 
-Files are stored with **public access** by default, making them accessible via URL. This is useful for sharing uploaded content, displaying images, and integrating with external services.
+**Storage Access Models:**
+
+- **Vercel Blob**: Files are stored with **public access** by default, making them accessible via permanent public URLs
+- **S3**: Files are stored **privately** and accessed via presigned URLs that expire after 7 days
 
 ## Storage Drivers
 
@@ -61,9 +64,11 @@ That's it! File uploads will now work seamlessly in both development and product
 
 S3 automatically uses IAM roles when running in AWS (ECS, EC2, Lambda). For local development or non-AWS environments, you'll need access keys.
 
+**Important**: S3 files are stored **privately** and accessed via presigned URLs (expire after 7 days). No public bucket policy is required.
+
 #### Running in AWS (Production)
 
-1. Create an S3 bucket and configure it for public access (if needed)
+1. Create a **private** S3 bucket (do NOT configure for public access)
 2. Attach an IAM role to your ECS task/EC2 instance/Lambda with S3 permissions:
 
 ```json
@@ -92,38 +97,35 @@ FILE_STORAGE_S3_REGION=us-east-1
 
 No access keys needed! The AWS SDK automatically uses the IAM role.
 
-4. **Important**: Configure your S3 bucket for public access and CORS:
+4. **Important**: Configure CORS for client-side uploads:
 
-**Bucket Policy** (for public read access):
-
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "PublicReadGetObject",
-      "Effect": "Allow",
-      "Principal": "*",
-      "Action": "s3:GetObject",
-      "Resource": "arn:aws:s3:::your-bucket-name/*"
-    }
-  ]
-}
-```
-
-**CORS Configuration** (for client-side uploads):
+**CORS Configuration** (required for browser uploads):
 
 ```json
 [
   {
     "AllowedHeaders": ["*"],
-    "AllowedMethods": ["GET", "PUT", "POST", "DELETE"],
+    "AllowedMethods": ["PUT", "POST", "DELETE", "HEAD"],
     "AllowedOrigins": ["https://yourdomain.com", "http://localhost:3000"],
     "ExposeHeaders": ["ETag"],
+    "MaxAgeSeconds": 3000
+  },
+  {
+    "AllowedMethods": ["GET", "HEAD"],
+    "AllowedOrigins": ["*"],
+    "AllowedHeaders": [],
     "MaxAgeSeconds": 3000
   }
 ]
 ```
+
+**Note**: The `ExposeHeaders: ["ETag"]` is **required** for uploads to work. Without it, browser uploads will fail with a network error.
+
+**S3 Bucket Settings:**
+
+- ✅ **Block all public access**: ENABLED (files stay private)
+- ✅ **Bucket ACLs**: Disabled (recommended - "Bucket owner enforced")
+- ✅ **Access**: Via presigned URLs only (generated server-side)
 
 #### Local Development
 
@@ -180,7 +182,7 @@ function FileUploadComponent() {
     if (!result) return; // Upload failed (error shown via toast)
 
     // File uploaded successfully
-    console.log("Public URL:", result.url);
+    console.log("File URL:", result.url); // Public URL for Vercel Blob, presigned URL for S3
     console.log("Pathname (key):", result.pathname);
   };
 
@@ -222,10 +224,10 @@ sequenceDiagram
 
   Browser->>UploadURL: POST (request presigned URL)
   Note over Browser,UploadURL: User authenticated
-  UploadURL->>S3: Generate presigned URL
+  UploadURL->>S3: Generate presigned upload URL
   Note over UploadURL,S3: Uses IAM role (no keys needed in AWS)
-  S3-->>UploadURL: Return presigned URL
-  UploadURL-->>Browser: Return presigned URL + public URL
+  S3-->>UploadURL: Return presigned upload URL
+  UploadURL-->>Browser: Return upload URL + access URL
   Browser->>S3: PUT file (with presigned URL)
   S3-->>Browser: Upload complete (200 OK)
   Browser->>Confirm: POST (confirm upload)
@@ -235,10 +237,10 @@ sequenceDiagram
 
 ### Features
 
-- ✅ **Cloud-Based Storage**: Vercel Blob provides globally distributed CDN
+- ✅ **Cloud-Based Storage**: Vercel Blob (CDN) or S3 (private)
 - ✅ **Works Everywhere**: Same storage in development and production
-- ✅ **Direct Client Upload**: Browser uploads directly to CDN (fastest)
-- ✅ **Public Access**: All files get public URLs
+- ✅ **Direct Client Upload**: Browser uploads directly (fastest)
+- ✅ **Flexible Access**: Public URLs (Vercel Blob) or presigned URLs (S3)
 - ✅ **Authentication**: Users must be logged in to upload
 - ✅ **Collision Prevention**: UUID-based file naming
 - ✅ **Type Safety**: Full TypeScript support with unified interface
@@ -255,7 +257,7 @@ const result = await serverFileStorage.upload(buffer, {
   contentType: "image/png",
 });
 
-console.log("Public URL:", result.sourceUrl);
+console.log("File URL:", result.sourceUrl); // Public URL for Vercel Blob, presigned URL (7-day expiry) for S3
 ```
 
 ## Upload Completion Tracking
@@ -354,13 +356,16 @@ The `FileStorage` interface provides:
 | Feature              | Vercel Blob         | S3                          |
 | -------------------- | ------------------- | --------------------------- |
 | Direct Client Upload | ✅ Yes              | ✅ Yes (presigned URLs)     |
+| File Access          | ✅ Public URLs      | 🔒 Private (presigned URLs) |
+| URL Expiry           | ❌ Never            | ⏱️ 7 days                   |
 | CDN                  | ✅ Global           | ✅ CloudFront (optional)    |
 | Cost                 | Pay-as-you-go       | Pay-as-you-go               |
-| Best For             | Vercel deployments  | AWS/self-hosted             |
+| Best For             | Vercel deployments  | AWS/self-hosted/private     |
 | Setup Complexity     | Minimal             | Moderate                    |
 | Local Development    | ✅ Works with token | ✅ Works (credentials file) |
 | IAM Role Support     | N/A                 | ✅ Yes                      |
 | Upload Tracking      | ✅ Webhook          | 🟡 Client callback          |
+| Public Access Policy | Required            | ❌ Not needed (private)     |
 
 ## Why Not Local Filesystem?
 
