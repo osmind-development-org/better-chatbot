@@ -3,7 +3,7 @@ import * as path from "path";
 import { pathToFileURL } from "node:url";
 import "load-env";
 import logger from "logger";
-import { openaiCompatibleModelsSafeParse } from "lib/ai/create-openai-compatiable";
+import { openaiCompatibleModelsSafeParse } from "@/lib/ai/create-openai-compatible";
 
 const ROOT = process.cwd();
 const FILE_NAME = "openai-compatible.config.ts";
