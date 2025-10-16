@@ -17,6 +17,64 @@ import {
 import { getUser, getUserAccounts, updateUserDetails } from "lib/user/server";
 import { getTranslations } from "next-intl/server";
 import { logger } from "better-auth";
+import {
+  generateImageWithOpenAI,
+  generateImageWithXAI,
+  GeneratedImageResult,
+  generateImageWithNanoBanana,
+} from "lib/ai/image/generate-image";
+
+export const updateUserImageAction = validatedActionWithUserManagePermission(
+  UpdateUserDetailsSchema.pick({ userId: true, image: true }),
+  async (
+    data,
+    userId,
+    userSession,
+    isOwnResource,
+  ): Promise<UpdateUserActionState> => {
+    const t = await getTranslations("User.Profile.common");
+
+    try {
+      const { image } = data;
+
+      if (isOwnResource) {
+        await auth.api.updateUser({
+          returnHeaders: true,
+          body: { image },
+          headers: await headers(),
+        });
+      } else {
+        await updateUserDetails(
+          userId,
+          userSession.user.name,
+          userSession.user.email || "",
+          image,
+        );
+      }
+
+      const user = await getUser(userId);
+      if (!user) {
+        return {
+          success: false,
+          message: t("userNotFound"),
+        };
+      }
+
+      return {
+        success: true,
+        message: "Profile photo updated successfully",
+        user,
+        currentUserUpdated: isOwnResource,
+      };
+    } catch (error) {
+      logger.error("Failed to update user image:", error);
+      return {
+        success: false,
+        message: "Failed to update profile photo",
+      };
+    }
+  },
+);
 
 export const updateUserDetailsAction = validatedActionWithUserManagePermission(
   UpdateUserDetailsSchema,
@@ -170,3 +228,99 @@ export const updateUserPasswordAction = validatedActionWithUserManagePermission(
     }
   },
 );
+
+type ImageProvider = "openai" | "xai" | "google";
+
+interface GenerateAvatarResult {
+  success: boolean;
+  base64?: string;
+  mimeType?: string;
+  error?: string;
+}
+
+/**
+ * Server Action to generate avatar image using AI
+ */
+export async function generateAvatarImageAction(
+  provider: ImageProvider,
+  prompt: string,
+): Promise<GenerateAvatarResult> {
+  try {
+    if (!prompt.trim()) {
+      return {
+        success: false,
+        error: "Prompt is required",
+      };
+    }
+
+    // Wrap user prompt with avatar-specific instructions
+    const enhancedPrompt = `You are tasked with creating a professional profile picture for a user.
+
+Requirements:
+- Portrait style with centered face
+- Clear, high-quality image suitable for profile/avatar use
+- Friendly and approachable expression
+- Professional yet personable appearance
+- Clean background that doesn't distract from the subject
+- Well-lit with good contrast
+
+User's request:
+"${prompt}"
+
+Generate a profile picture that fulfills the user's request while maintaining the professional portrait quality requirements above.`;
+
+    let response: GeneratedImageResult;
+
+    switch (provider) {
+      case "openai":
+        response = await generateImageWithOpenAI({
+          prompt: enhancedPrompt,
+        });
+        break;
+      case "xai":
+        response = await generateImageWithXAI({
+          prompt: enhancedPrompt,
+        });
+        break;
+      case "google":
+        response = await generateImageWithNanoBanana({
+          prompt: enhancedPrompt,
+        });
+        break;
+      default:
+        return {
+          success: false,
+          error: "Invalid provider",
+        };
+    }
+
+    if (!response || response.images.length === 0) {
+      return {
+        success: false,
+        error: "No image generated",
+      };
+    }
+
+    const image = response.images[0];
+
+    if (!image.base64) {
+      return {
+        success: false,
+        error: "No image data received",
+      };
+    }
+
+    return {
+      success: true,
+      base64: image.base64,
+      mimeType: image.mimeType || "image/png",
+    };
+  } catch (error) {
+    logger.error("Failed to generate avatar image:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to generate image",
+    };
+  }
+}

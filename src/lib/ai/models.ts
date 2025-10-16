@@ -5,7 +5,7 @@ import { openai } from "@ai-sdk/openai";
 import { google } from "@ai-sdk/google";
 import { anthropic } from "@ai-sdk/anthropic";
 import { xai } from "@ai-sdk/xai";
-import { openrouter } from "@openrouter/ai-sdk-provider";
+import { LanguageModelV2, openrouter } from "@openrouter/ai-sdk-provider";
 import { createGroq } from "@ai-sdk/groq";
 import { LanguageModel } from "ai";
 import {
@@ -38,13 +38,12 @@ const staticModels = {
     "gemini-2.5-pro": google("gemini-2.5-pro"),
   },
   anthropic: {
-    "claude-4-sonnet": anthropic("claude-4-sonnet-20250514"),
-    "claude-4-opus": anthropic("claude-4-opus-20250514"),
-    "claude-3-7-sonnet": anthropic("claude-3-7-sonnet-20250219"),
+    "sonnet-4.5": anthropic("claude-sonnet-4-5"),
+    "opus-4.1": anthropic("claude-opus-4-1"),
   },
   xai: {
-    "grok-4": xai("grok-4"),
     "grok-4-fast": xai("grok-4-fast-non-reasoning"),
+    "grok-4": xai("grok-4"),
     "grok-3": xai("grok-3"),
     "grok-3-mini": xai("grok-3-mini"),
   },
@@ -83,6 +82,13 @@ const staticUnsupportedModels = new Set([
   staticModels.openRouter["gemini-2.0-flash-exp:free"],
 ]);
 
+const staticSupportImageInputModels = {
+  ...staticModels.google,
+  ...staticModels.xai,
+  ...staticModels.openai,
+  ...staticModels.anthropic,
+};
+
 const openaiCompatibleProviders = openaiCompatibleModelsSafeParse(
   process.env.OPENAI_COMPATIBLE_DATA,
 );
@@ -103,6 +109,10 @@ export const isToolCallUnsupportedModel = (model: LanguageModel) => {
   return allUnsupportedModels.has(model);
 };
 
+const isImageInputUnsupportedModel = (model: LanguageModelV2) => {
+  return !Object.values(staticSupportImageInputModels).includes(model);
+};
+
 const fallbackModel = staticModels.openai["gpt-4.1"];
 
 export const customModelProvider = {
@@ -111,6 +121,7 @@ export const customModelProvider = {
     models: Object.entries(models).map(([name, model]) => ({
       name,
       isToolCallUnsupported: isToolCallUnsupportedModel(model),
+      isImageInputUnsupported: isImageInputUnsupportedModel(model),
     })),
     hasAPIKey: checkProviderAPIKey(provider as keyof typeof staticModels),
   })),
@@ -134,9 +145,6 @@ function checkProviderAPIKey(provider: keyof typeof staticModels) {
       break;
     case "xai":
       key = process.env.XAI_API_KEY;
-      break;
-    case "ollama":
-      key = process.env.OLLAMA_API_KEY;
       break;
     case "groq":
       key = process.env.GROQ_API_KEY;
