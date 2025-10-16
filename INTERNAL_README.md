@@ -2,6 +2,50 @@
 
 I'm going to start keeping a log here with some notes and information about changes we've made and processes we're using for this repo
 
+## Local Development Environment Setup
+
+### Quick Start
+
+```bash
+make dev-setup
+```
+
+This installs dependencies, creates your `.env` file, starts the database, and runs migrations. After it completes, add your API keys to `.env` and run `make dev`.
+
+### Manual Setup
+
+If the automated setup doesn't work:
+
+1. Install dependencies: `pnpm install`
+2. Copy `.env.example` to `.env` and fill in:
+   - `POSTGRES_URL=postgresql://postgres:postgres@localhost:5432/better_chatbot_dev`
+   - `BETTER_AUTH_SECRET` (generate with `npx @better-auth/cli@latest secret`)
+   - At least one LLM provider API key (OpenAI, Anthropic, or Google)
+3. Start database: `make db-up`
+4. Run migrations: `make db-migrate`
+5. Start app: `make dev`
+
+The app will be at http://localhost:3000
+
+### Make Commands
+
+We use Make to manage the local dev environment. Run `make help` to see all available commands for database management, testing, and code quality checks.
+
+### File Storage
+
+For local development with S3, configure these in your `.env`:
+
+```bash
+FILE_STORAGE_TYPE=s3
+FILE_STORAGE_PREFIX=uploads
+FILE_STORAGE_S3_BUCKET=osmind-better-chat-dev
+FILE_STORAGE_S3_REGION=us-west-2
+```
+
+AWS credentials will be loaded from your AWS CLI configuration (`~/.aws/credentials`) or you can set `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` in `.env`.
+
+---
+
 ## Staying up-to-date with upstream
 
 Where possible, you should try to do this in a separate branch with no other changes. These can get big, and it could be hard to review. Currently, the best way to do this is a fairly manual process. What I did:

@@ -6,6 +6,23 @@ import { drizzle as drizzlePg } from "drizzle-orm/node-postgres";
 //     console.log({ query, params });
 //   }
 // }
-export const pgDb = drizzlePg(`${process.env.POSTGRES_URL}?sslmode=no-verify`, {
+
+// Build connection string with appropriate SSL mode
+const buildConnectionString = () => {
+  const baseUrl = process.env.POSTGRES_URL || "";
+
+  // If URL already has query parameters, don't append anything
+  if (baseUrl.includes("?")) {
+    return baseUrl;
+  }
+
+  // For local development, disable SSL entirely (Docker Postgres has no SSL)
+  // For production, use no-verify (SSL without certificate verification)
+  const sslMode =
+    process.env.NODE_ENV === "development" ? "disable" : "no-verify";
+  return `${baseUrl}?sslmode=${sslMode}`;
+};
+
+export const pgDb = drizzlePg(buildConnectionString(), {
   //   logger: new MyLogger(),
 });
