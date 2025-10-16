@@ -23,8 +23,8 @@
     "format": "biome format --write",
     "check-types": "tsc --noEmit",
     "initial:env": "tsx scripts/initial-env.ts",
-    "openai-compatiable:init": "tsx scripts/init-openai-compatiable.ts",
-    "openai-compatiable:parse": "tsx scripts/parse-openai-compatiable.ts",
+    "openai-compatible:init": "tsx scripts/init-openai-compatible.ts",
+    "openai-compatible:parse": "tsx scripts/parse-openai-compatible.ts",
     "postinstall": "tsx scripts/postinstall.ts",
     "clean": "tsx scripts/clean.ts",
     "clean:next": "tsx scripts/clean.ts .next",
@@ -35,14 +35,14 @@
     "db:migrate": "tsx scripts/db-migrate.ts",
     "db:pull": "drizzle-kit pull",
     "db:check": "drizzle-kit check",
-    "docker-compose:up": "docker-compose -f docker/compose.yml up -d --build",
-    "docker-compose:down": "docker-compose -f docker/compose.yml down",
-    "docker-compose:logs": "docker-compose -f docker/compose.yml logs -f",
-    "docker-compose:ps": "docker-compose -f docker/compose.yml ps",
-    "docker-compose:update": "git pull && docker-compose -f docker/compose.yml up -d --build",
-    "docker:pg": "docker run --name better-chatbot-pg -e POSTGRES_PASSWORD=your_password -e POSTGRES_USER=your_username -e POSTGRES_DB=your_database_name -p 5432:5432 -d postgres",
+    "docker-compose:up": "docker compose -f docker/compose.yml up -d --build",
+    "docker-compose:down": "docker compose -f docker/compose.yml down",
+    "docker-compose:logs": "docker compose -f docker/compose.yml logs -f",
+    "docker-compose:ps": "docker compose -f docker/compose.yml ps",
+    "docker-compose:update": "git pull && docker compose -f docker/compose.yml up -d --build",
+    "docker:pg": "docker run --name better-chatbot-pg -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=better_chatbot_dev -p 5432:5432 -d postgres:17",
     "docker:redis": "docker run --name better-chatbot-redis -p 6379:6379 -d redis:7-alpine",
-    "docker:app": "docker build -f docker/Dockerfile -t better-chatbot . && docker run -p 3000:3000 --env-file .env better-chatbot",
+    "docker:app": "docker compose -f docker/compose.yml up -d --build better-chatbot",
     "prepare": "husky",
     "playwright:install": "playwright install",
     "check": "pnpm lint:fix && pnpm check-types && pnpm test"
@@ -153,10 +153,7 @@
     "vitest": "^3.2.4"
   },
   "lint-staged": {
-    "*.{js,json,mjs,ts,yaml,tsx,css}": [
-      "pnpm format",
-      "pnpm lint:fix"
-    ]
+    "*.{js,json,mjs,ts,yaml,tsx,css}": ["pnpm format", "pnpm lint:fix"]
   },
   "packageManager": "pnpm@10.18.0",
   "engines": {
