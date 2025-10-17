@@ -32,6 +32,7 @@ help:
 	@echo "  make test           Run unit tests"
 	@echo "  make test-watch     Run unit tests in watch mode"
 	@echo "  make test-e2e       Run end-to-end tests"
+	@echo "  make test-e2e-ui    Run end-to-end tests with UI"
 	@echo ""
 	@echo "Code Quality:"
 	@echo "  make lint           Run linting"
