@@ -29,7 +29,7 @@
     "clean": "tsx scripts/clean.ts",
     "clean:next": "tsx scripts/clean.ts .next",
     "db:generate": "drizzle-kit generate",
-    "db:reset": "drizzle-kit drop && drizzle-kit push",
+    "db:reset": "tsx scripts/db-reset.ts",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:migrate": "tsx scripts/db-migrate.ts",

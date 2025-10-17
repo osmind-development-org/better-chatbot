@@ -23,7 +23,7 @@ help:
 	@echo "  make db-up          Start Postgres container"
 	@echo "  make db-down        Stop Postgres container"
 	@echo "  make db-logs        View Postgres logs"
-	@echo "  make db-reset       Drop and recreate database schema"
+	@echo "  make db-reset       Drop all tables and recreate schema (complete reset)"
 	@echo "  make db-migrate     Run database migrations"
 	@echo "  make db-shell       Open psql shell in Postgres container"
 	@echo "  make db-studio      Open Drizzle Studio to view database"
