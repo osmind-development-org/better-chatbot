@@ -4,13 +4,29 @@ I'm going to start keeping a log here with some notes and information about chan
 
 ## Local Development Environment Setup
 
+### Prerequisites
+
+We recommend installing node with asdf, PNPM with npm, and Docker and the AWS CLI with homebrew.
+
+- Node.js: Version 20.x or higher (check with `node --version`)
+- pnpm: Version 9.x or higher (install with `npm install -g pnpm`)
+- Docker: Required for running the local PostgreSQL database
+- AWS CLI (optional): For S3 file storage functionality
+
 ### Quick Start
 
 ```bash
 make dev-setup
 ```
 
-This installs dependencies, creates your `.env` file, starts the database, and runs migrations. After it completes, add your API keys to `.env` and run `make dev`.
+This installs dependencies, creates a `.env` file (including auto-generating `BETTER_AUTH_SECRET`), starts the database, and runs migrations.
+
+After it completes, you'll need to manually add values to your `.env` file:
+
+- LLM provider API keys (stored in 1Password - search for "Better Chat Dev API Keys")
+- AWS credentials (if using S3 file storage)
+
+Then run `make dev` to start the development server.
 
 ### Manual Setup
 
@@ -18,9 +34,15 @@ If the automated setup doesn't work:
 
 1. Install dependencies: `pnpm install`
 2. Copy `.env.example` to `.env` and fill in:
+   - `NODE_ENV=development` (this lets the DB connection actually work locally)
    - `POSTGRES_URL=postgresql://postgres:postgres@localhost:5432/better_chatbot_dev`
    - `BETTER_AUTH_SECRET` (generate with `npx @better-auth/cli@latest secret`)
-   - At least one LLM provider API key (OpenAI, Anthropic, or Google)
+   - At least one LLM provider API key: `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, or `GOOGLE_GENERATIVE_AI_API_KEY` (stored in 1Password - search for "Better Chat Dev API Keys")
+   - For S3 file storage:
+     - `FILE_STORAGE_TYPE=s3`
+     - `FILE_STORAGE_S3_BUCKET=osmind-better-chat-dev`
+     - `FILE_STORAGE_S3_REGION=us-west-2`
+   - AWS credentials: Either set `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` in `.env`, or use your local AWS CLI config (`~/.aws/credentials`)
 3. Start database: `make db-up`
 4. Run migrations: `make db-migrate`
 5. Start app: `make dev`
@@ -30,19 +52,6 @@ The app will be at http://localhost:3000
 ### Make Commands
 
 We use Make to manage the local dev environment. Run `make help` to see all available commands for database management, testing, and code quality checks.
-
-### File Storage
-
-For local development with S3, configure these in your `.env`:
-
-```bash
-FILE_STORAGE_TYPE=s3
-FILE_STORAGE_PREFIX=uploads
-FILE_STORAGE_S3_BUCKET=osmind-better-chat-dev
-FILE_STORAGE_S3_REGION=us-west-2
-```
-
-AWS credentials will be loaded from your AWS CLI configuration (`~/.aws/credentials`) or you can set `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` in `.env`.
 
 ---
 

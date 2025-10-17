@@ -52,7 +52,14 @@ dev-setup: install
 	@if [ ! -f .env ]; then \
 		echo "Creating .env from .env.example..."; \
 		cp .env.example .env; \
-		echo "✅ Created .env file - please update with your API keys"; \
+		echo "Generating BETTER_AUTH_SECRET..."; \
+		SECRET=$$(npx --yes @better-auth/cli@latest secret); \
+		if grep -q "BETTER_AUTH_SECRET=" .env; then \
+			sed -i.bak "s|BETTER_AUTH_SECRET=.*|BETTER_AUTH_SECRET=$$SECRET|" .env && rm .env.bak; \
+		else \
+			echo "BETTER_AUTH_SECRET=$$SECRET" >> .env; \
+		fi; \
+		echo "✅ Created .env file with BETTER_AUTH_SECRET - please update with your API keys"; \
 	else \
 		echo "✅ .env file already exists"; \
 	fi
