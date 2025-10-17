@@ -206,12 +206,6 @@ export default function PromptInput({
       const file = e.target.files?.[0];
       if (!file || !threadId) return;
 
-      // Validate image type
-      if (!file.type.startsWith("image/")) {
-        toast.error(t("pleaseUploadImageFile"));
-        return;
-      }
-
       // Validate file size (10MB limit)
       if (file.size > 10 * 1024 * 1024) {
         toast.error(t("imageSizeMustBeLessThan10MB"));
@@ -551,7 +545,6 @@ export default function PromptInput({
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept="image/*"
                   className="hidden"
                   onChange={handleFileSelect}
                   disabled={!threadId}
@@ -720,8 +713,6 @@ export default function PromptInput({
                 <div className="flex flex-wrap gap-2">
                   {uploadedFiles.map((file) => {
                     const isImage = file.mimeType.startsWith("image/");
-                    const fileExtension =
-                      file.name.split(".").pop()?.toUpperCase() || "FILE";
                     const imageSrc =
                       file.previewUrl || file.url || file.dataUrl || "";
 
@@ -738,10 +729,10 @@ export default function PromptInput({
                             className="w-24 h-24 object-cover"
                           />
                         ) : (
-                          <div className="w-24 h-24 flex flex-col items-center justify-center bg-muted">
-                            <FileIcon className="size-8 text-muted-foreground mb-1" />
-                            <span className="text-xs font-medium text-muted-foreground">
-                              {fileExtension}
+                          <div className="w-32 h-24 flex flex-col items-center justify-center bg-muted p-2">
+                            <FileIcon className="size-6 text-muted-foreground mb-1" />
+                            <span className="text-[10px] font-medium text-muted-foreground text-center line-clamp-2 break-all px-1">
+                              {file.name}
                             </span>
                           </div>
                         )}
