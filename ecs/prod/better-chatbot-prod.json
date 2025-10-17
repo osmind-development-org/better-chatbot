@@ -63,8 +63,8 @@
           "valueFrom": "arn:aws:secretsmanager:us-west-2:525896657660:secret:prod/tools/better-chat-7wkImg:GOOGLE_GENERATIVE_AI_API_KEY::"
         },
         {
-          "name": "AUTH_SECRET",
-          "valueFrom": "arn:aws:secretsmanager:us-west-2:525896657660:secret:prod/tools/better-chat-7wkImg:AUTH_SECRET::"
+          "name": "BETTER_AUTH_SECRET",
+          "valueFrom": "arn:aws:secretsmanager:us-west-2:525896657660:secret:prod/tools/better-chat-7wkImg:BETTER_AUTH_SECRET::"
         },
         {
           "name": "GOOGLE_CLIENT_ID",

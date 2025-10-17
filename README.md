@@ -25,19 +25,20 @@ You only need **one AI Provider API Key** (OpenAI, Claude, Gemini, etc.). Everyt
 
 **Better Chatbot** - A better open-source AI chatbot for individuals and teams, inspired by ChatGPT, Claude, Grok, and Gemini.
 
-• **Multi-AI Support** - Integrates all major LLMs: OpenAI, Anthropic, Google, xAI, Ollama, and more  
-• **Powerful Tools** - MCP protocol, web search, JS/Python code execution, data visualization  
-• **Image Generation** - Create and edit images with AI models (OpenAI, Google Gemini, xAI)  
-• **Automation** - Custom agents, visual workflows, artifact generation  
-• **Collaboration** - Share agents, workflows, and MCP configurations with your team  
-• **Voice Assistant** - Realtime voice chat with full MCP tool integration  
-• **Intuitive UX** - Instantly invoke any feature with `@mention`  
+• **Multi-AI Support** - Integrates all major LLMs: OpenAI, Anthropic, Google, xAI, Ollama, and more
+• **Powerful Tools** - MCP protocol, web search, JS/Python code execution, data visualization
+• **Image Generation** - Create and edit images with AI models (OpenAI, Google Gemini, xAI)
+• **Automation** - Custom agents, visual workflows, artifact generation
+• **Collaboration** - Share agents, workflows, and MCP configurations with your team
+• **Voice Assistant** - Realtime voice chat with full MCP tool integration
+• **Intuitive UX** - Instantly invoke any feature with `@mention`
 • **Quick Start** - Deploy free with Vercel Deploy button
 
 Built with Vercel AI SDK and Next.js, combining the best features of leading AI services into one platform.
 
 ## Table of Contents
 
+- [Quick Start 🚀](#quick-start-)
 - [Table of Contents](#table-of-contents)
 - [Preview](#preview)
   - [🧩 Browser Automation with Playwright MCP](#-browser-automation-with-playwright-mcp)
@@ -48,6 +49,7 @@ Built with Vercel AI SDK and Next.js, combining the best features of leading AI 
   - [🧭 Tool Choice Mode](#-tool-choice-mode)
   - [🛠️ Default Tools](#️-default-tools)
     - [🌐 Web Search](#-web-search)
+    - [🎨 Image Generation](#-image-generation)
     - [⚡️ JS,PYTHON Executor](#️-jspython-executor)
     - [📊 Data Visualization Tools](#-data-visualization-tools)
 - [Getting Started](#getting-started)
@@ -66,6 +68,7 @@ Built with Vercel AI SDK and Next.js, combining the best features of leading AI 
 - [💡 Tips](#-tips)
   - [💬 Temporary Chat Windows](#-temporary-chat-windows)
 - [🗺️ Roadmap](#️-roadmap)
+- [💖 Support](#-support)
 - [🙌 Contributing](#-contributing)
 - [💬 Join Our Discord](#-join-our-discord)
 
@@ -365,42 +368,42 @@ NOT_ALLOW_ADD_MCP_SERVERS=
 
 Step-by-step setup guides for running and configuring better-chatbot.
 
-#### [🔌 MCP Server Setup & Tool Testing](./docs/tips-guides/mcp-server-setup-and-tool-testing.md)
+### [🔌 MCP Server Setup & Tool Testing](./docs/tips-guides/mcp-server-setup-and-tool-testing.md)
 
 - How to add and configure MCP servers in your environment
 
-#### [🐳 Docker Hosting Guide](./docs/tips-guides/docker.md)
+### [🐳 Docker Hosting Guide](./docs/tips-guides/docker.md)
 
 - How to self-host the chatbot using Docker, including environment configuration.
 
-#### [▲ Vercel Hosting Guide](./docs/tips-guides/vercel.md)
+### [▲ Vercel Hosting Guide](./docs/tips-guides/vercel.md)
 
 - Deploy the chatbot to Vercel with simple setup steps for production use.
 
-#### [🗂️ File Storage Drivers](./docs/tips-guides/file-storage.md)
+### [🗂️ File Storage Drivers](./docs/tips-guides/file-storage.md)
 
 - Cloud-based file storage with **Vercel Blob** (default) for seamless uploads in both development and production, or **Amazon S3** for AWS deployments with IAM role support.
 
-#### [🎯 System Prompts & Chat Customization](./docs/tips-guides/system-prompts-and-customization.md)
+### [🎯 System Prompts & Chat Customization](./docs/tips-guides/system-prompts-and-customization.md)
 
 - Personalize your chatbot experience with custom system prompts, user preferences, and MCP tool instructions
 
-#### [🔐 OAuth Sign-In Setup](./docs/tips-guides/oauth.md)
+### [🔐 OAuth Sign-In Setup](./docs/tips-guides/oauth.md)
 
 - Configure Google, GitHub, and Microsoft OAuth for secure user login support.
 
-#### [🕵🏿 Adding openAI like providers](docs/tips-guides/adding-openAI-like-providers.md)
+### [🕵🏿 Adding openAI like providers](docs/tips-guides/adding-openAI-like-providers.md)
 
 - Adding openAI like ai providers
 
-#### [🧪 E2E Testing Guide](./docs/tips-guides/e2e-testing-guide.md)
+### [🧪 E2E Testing Guide](./docs/tips-guides/e2e-testing-guide.md)
 
 - Comprehensive end-to-end testing with Playwright including multi-user scenarios, agent visibility testing, and CI/CD integration
   <br/>
 
 ## 💡 Tips
 
-#### [💬 Temporary Chat Windows](./docs/tips-guides/temporary_chat.md)
+### [💬 Temporary Chat Windows](./docs/tips-guides/temporary_chat.md)
 
 - Open lightweight popup chats for quick side questions or testing — separate from your main thread.
 

@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import {
   createOpenAICompatibleModels,
   type OpenAICompatibleProvider,
-} from "./create-openai-compatiable";
+} from "./create-openai-compatible";
 
 // Mock the @ai-sdk/openai-compatible module
 vi.mock("@ai-sdk/openai-compatible", () => ({

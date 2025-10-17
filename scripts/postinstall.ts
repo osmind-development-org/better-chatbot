@@ -45,8 +45,8 @@ async function main() {
     );
     await runCommand("pnpm initial:env", "Initial environment setup");
     await runCommand(
-      "pnpm openai-compatiable:init",
-      "Initial openAI compatiable config setup",
+      "pnpm openai-compatible:init",
+      "Initial openAI compatible config setup",
     );
   }
 }

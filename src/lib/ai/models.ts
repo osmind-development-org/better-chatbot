@@ -11,7 +11,7 @@ import { LanguageModel } from "ai";
 import {
   createOpenAICompatibleModels,
   openaiCompatibleModelsSafeParse,
-} from "./create-openai-compatiable";
+} from "./create-openai-compatible";
 import { ChatModel } from "app-types/chat";
 
 const ollama = createOllama({
