@@ -15,7 +15,7 @@ help:
 	@echo ""
 	@echo "Development:"
 	@echo "  make install        Install dependencies"
-	@echo "  make dev-setup      Set up local dev environment (creates .env if missing)"
+	@echo "  make dev-setup      Interactive dev setup (run after install)"
 	@echo "  make dev            Start Next.js dev server (assumes DB is running)"
 	@echo "  make dev-full       Start both database and Next.js dev server"
 	@echo ""
@@ -48,21 +48,10 @@ install:
 	pnpm install
 
 # Development setup
-dev-setup: install
-	@if [ ! -f .env ]; then \
-		echo "Creating .env from .env.example..."; \
-		cp .env.example .env; \
-		echo "Generating BETTER_AUTH_SECRET..."; \
-		SECRET=$$(npx --yes @better-auth/cli@latest secret); \
-		if grep -q "BETTER_AUTH_SECRET=" .env; then \
-			sed -i.bak "s|BETTER_AUTH_SECRET=.*|BETTER_AUTH_SECRET=$$SECRET|" .env && rm .env.bak; \
-		else \
-			echo "BETTER_AUTH_SECRET=$$SECRET" >> .env; \
-		fi; \
-		echo "✅ Created .env file with BETTER_AUTH_SECRET - please update with your API keys"; \
-	else \
-		echo "✅ .env file already exists"; \
-	fi
+dev-setup:
+	@echo "🚀 Running interactive environment setup..."
+	@pnpm dev:setup
+	@echo ""
 	@echo "Setting up database..."
 	@make db-up
 	@echo "Waiting for database to be ready..."
@@ -70,10 +59,7 @@ dev-setup: install
 	@make db-migrate
 	@echo ""
 	@echo "✅ Dev environment setup complete!"
-	@echo ""
-	@echo "Next steps:"
-	@echo "  1. Update .env with your API keys (OpenAI, Anthropic, Google, etc.)"
-	@echo "  2. Run 'make dev' to start the development server"
+	@echo "   Run 'make dev' to start the development server"
 
 # Start development server (assumes DB is already running)
 dev:
@@ -101,7 +87,13 @@ db-logs:
 	docker compose -f docker/compose.yml logs -f postgres
 
 db-reset:
-	pnpm db:reset
+	@echo "🗑️  Stopping database and removing volumes..."
+	@docker compose -f docker/compose.yml down -v
+	@echo "🚀 Starting fresh database..."
+	@make db-up
+	@echo "⏳ Waiting for database to be ready..."
+	@sleep 3
+	@pnpm db:reset
 
 db-migrate:
 	pnpm db:migrate
