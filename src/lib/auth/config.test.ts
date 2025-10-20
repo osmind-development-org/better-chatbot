@@ -113,6 +113,7 @@ describe("Auth Config", () => {
         clientSecret: "google-client-secret",
         prompt: "select_account",
         disableSignUp: false,
+        overrideUserInfoOnSignIn: true,
       });
     });
 
@@ -126,6 +127,7 @@ describe("Auth Config", () => {
         clientId: "google-client-id",
         clientSecret: "google-client-secret",
         disableSignUp: false,
+        overrideUserInfoOnSignIn: true,
       });
     });
 
@@ -200,6 +202,7 @@ describe("Auth Config", () => {
             clientSecret: "google-client-secret",
             prompt: "select_account",
             disableSignUp: true,
+            overrideUserInfoOnSignIn: true,
           },
           microsoft: {
             clientId: "microsoft-client-id",
