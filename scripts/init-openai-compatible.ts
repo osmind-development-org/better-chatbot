@@ -2,7 +2,7 @@ import path from "path";
 import * as fs from "fs";
 
 const CONFIG_TEMPLATE = `
-import { type OpenAICompatibleProvider } from "./src/lib/ai/create-openai-compatiable";
+import { type OpenAICompatibleProvider } from "@/lib/ai/create-openai-compatible";
 
 const providers: OpenAICompatibleProvider[] = [
   // example
