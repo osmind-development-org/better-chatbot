@@ -197,10 +197,10 @@
     "uploadFile": "Upload File",
     "generateImage": "Generate Image",
     "imageUploadedSuccessfully": "File uploaded successfully",
-    "pleaseUploadFileFile": "Please upload a file",
+    "pleaseUploadFile": "Please upload a file",
     "imageSizeMustBeLessThan10MB": "File size must be less than 10MB",
-    "failedToUploadFile": "Failed to upload image",
-    "imageUploadFailedUsingBase64": "Image upload failed. Using base64 encoding as fallback.",
+    "failedToUploadFile": "Failed to upload file",
+    "fileUploadFailedUsingBase64": "File upload failed. Using base64 encoding as fallback.",
     "Greeting": {
       "goodMorning": "Good morning, {name}",
       "goodAfternoon": "Good afternoon, {name}",
