@@ -194,12 +194,12 @@
   "Chat": {
     "Error": "Chat Error",
     "thisMessageWasNotSavedPleaseTryTheChatAgain": "This message was not saved. Please try the chat again.",
-    "uploadImage": "Upload File",
+    "uploadFile": "Upload File",
     "generateImage": "Generate Image",
     "imageUploadedSuccessfully": "File uploaded successfully",
-    "pleaseUploadImageFile": "Please upload a file",
+    "pleaseUploadFileFile": "Please upload a file",
     "imageSizeMustBeLessThan10MB": "File size must be less than 10MB",
-    "failedToUploadImage": "Failed to upload image",
+    "failedToUploadFile": "Failed to upload image",
     "imageUploadFailedUsingBase64": "Image upload failed. Using base64 encoding as fallback.",
     "Greeting": {
       "goodMorning": "Good morning, {name}",

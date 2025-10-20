@@ -75,12 +75,12 @@
   "Chat": {
     "Error": "聊天错误",
     "thisMessageWasNotSavedPleaseTryTheChatAgain": "此消息未保存。请重试聊天。",
-    "uploadImage": "上传文件",
+    "uploadFile": "上传文件",
     "generateImage": "生成图片",
     "imageUploadedSuccessfully": "图片上传成功",
-    "pleaseUploadImageFile": "请上传文件",
+    "pleaseUploadFileFile": "请上传文件",
     "imageSizeMustBeLessThan10MB": "图片大小必须小于10MB",
-    "failedToUploadImage": "上传图片失败",
+    "failedToUploadFile": "上传图片失败",
     "imageUploadFailedUsingBase64": "图片上传失败。使用Base64编码发送。",
     "Greeting": {
       "goodMorning": "早上好，{name}",

@@ -74,12 +74,12 @@
   "Chat": {
     "Error": "チャットエラー",
     "thisMessageWasNotSavedPleaseTryTheChatAgain": "このメッセージは保存されませんでした。もう一度チャットをお試しください。",
-    "uploadImage": "ファイルをアップロード",
+    "uploadFile": "ファイルをアップロード",
     "generateImage": "画像を生成",
     "imageUploadedSuccessfully": "画像が正常にアップロードされました",
-    "pleaseUploadImageFile": "ファイルをアップロードしてください",
+    "pleaseUploadFileFile": "ファイルをアップロードしてください",
     "imageSizeMustBeLessThan10MB": "画像サイズは10MB未満である必要があります",
-    "failedToUploadImage": "画像のアップロードに失敗しました",
+    "failedToUploadFile": "画像のアップロードに失敗しました",
     "imageUploadFailedUsingBase64": "画像のアップロードに失敗しました。Base64エンコーディングを使用して送信します。",
     "Greeting": {
       "goodMorning": "おはようございます、{name}さん",
