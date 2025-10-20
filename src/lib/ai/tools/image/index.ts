@@ -13,6 +13,7 @@ import z from "zod";
 import { ImageToolName } from "..";
 import logger from "logger";
 import { openai } from "@ai-sdk/openai";
+import { toAny } from "lib/utils";
 
 export type ImageToolResult = {
   images: {
@@ -152,7 +153,7 @@ export const openaiImageTool = createTool({
       tools: {
         image_generation: openai.tools.imageGeneration({
           outputFormat: "webp",
-          model: "gpt-image-1",
+          model: "gpt-image-1-mini",
         }),
       },
       toolChoice: "required",
@@ -173,7 +174,7 @@ export const openaiImageTool = createTool({
         return {
           images: [{ url: uploadedImage.sourceUrl, mimeType: "image/webp" }],
           mode,
-          model: "gpt-4.1",
+          model: "gpt-image-1-mini",
           guide:
             "The image has been successfully generated and is now displayed above. If you need any edits, modifications, or adjustments to the image, please let me know.",
         };
@@ -182,7 +183,7 @@ export const openaiImageTool = createTool({
     return {
       images: [],
       mode,
-      model: "gpt-4.1",
+      model: "gpt-image-1-mini",
       guide: "",
     };
   },
@@ -190,6 +191,7 @@ export const openaiImageTool = createTool({
 
 function convertToImageToolPartToImagePart(part: ToolResultPart): ImagePart[] {
   if (part.toolName !== ImageToolName) return [];
+  if (!toAny(part).output?.value?.images?.length) return [];
   const result = part.output.value as ImageToolResult;
   return result.images.map((image) => ({
     type: "image",
@@ -200,6 +202,7 @@ function convertToImageToolPartToImagePart(part: ToolResultPart): ImagePart[] {
 
 function convertToImageToolPartToFilePart(part: ToolResultPart): FilePart[] {
   if (part.toolName !== ImageToolName) return [];
+  if (!toAny(part).output?.value?.images?.length) return [];
   const result = part.output.value as ImageToolResult;
   return result.images.map((image) => ({
     type: "file",
