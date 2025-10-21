@@ -7,7 +7,7 @@
     "agentInstructionsLabel": "이 에이전트의 역할, 성격, 지침, 지식등 편하게 작성해주세요.",
     "agentInstructionsPlaceholder": "이 에이전트는 주식 분석을 도와줍니다. 웹검색 도구를 활용하여 주식 정보를 얻어옵니다...",
     "agentNameAndIconLabel": "에이전트에게 이름과 아이콘을 붙여주세요.",
-    "agentNamePlaceholder": "better-agent",
+    "agentNamePlaceholder": "ozzie-agent",
     "agentRolePlaceholder": "주식 분석",
     "agentSettingsDescription": "여기부터는 에이전트에게 영향을 줄 수 있는 설정입니다.",
     "agentToolsLabel": "이 에이전트가 사용할 수 있는 도구를 추가해주세요.",
@@ -70,7 +70,7 @@
   },
   "Auth": {
     "Intro": {
-      "description": "better-chatbot에 오신 것을 환영합니다. 우리의 AI 기반 대화 도구를 경험하세요."
+      "description": "Ozzie에 오신 것을 환영합니다. 우리의 AI 기반 대화 도구를 경험하세요."
     },
     "SignIn": {
       "description": "계정에 로그인하여 계속합니다",

@@ -7,7 +7,7 @@
     "agentInstructionsLabel": "请自由描述此智能体的角色、性格、指导原则、知识等。",
     "agentInstructionsPlaceholder": "此智能体帮助进行股票分析。它使用网络搜索工具来获取股票信息...",
     "agentNameAndIconLabel": "为您的智能体设置名称和图标。",
-    "agentNamePlaceholder": "better-agent",
+    "agentNamePlaceholder": "ozzie-agent",
     "agentRolePlaceholder": "股票分析",
     "agentSettingsDescription": "以下是可能影响智能体的设置。",
     "agentToolsLabel": "添加此智能体可以使用的工具。",
@@ -70,7 +70,7 @@
   },
   "Auth": {
     "Intro": {
-      "description": "欢迎来到 MCP 聊天机器人。登录以体验我们的 AI 驱动的对话工具。"
+      "description": "欢迎来到 Ozzie。登录以体验我们的 AI 驱动的对话工具。"
     },
     "SignIn": {
       "description": "登录您的账户以继续",

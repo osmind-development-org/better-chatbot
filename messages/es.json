@@ -7,7 +7,7 @@
     "agentInstructionsLabel": "Siéntete libre de escribir el papel, personalidad, directrices, conocimiento, etc. del agente.",
     "agentInstructionsPlaceholder": "Este agente ayuda con el análisis de acciones. Utiliza herramientas de búsqueda web para obtener información de acciones...",
     "agentNameAndIconLabel": "Dale a tu agente un nombre y un icono.",
-    "agentNamePlaceholder": "better-agent",
+    "agentNamePlaceholder": "ozzie-agent",
     "agentRolePlaceholder": "análisis de acciones",
     "agentSettingsDescription": "A partir de aquí, estas son configuraciones que pueden afectar al agente.",
     "agentToolsLabel": "Añade herramientas que este agente puede usar.",
@@ -70,7 +70,7 @@
   },
   "Auth": {
     "Intro": {
-      "description": "Bienvenido a better-chatbot. Inicia sesión para experimentar nuestras herramientas conversacionales impulsadas por IA."
+      "description": "Bienvenido a Ozzie. Inicia sesión para experimentar nuestras herramientas conversacionales impulsadas por IA."
     },
     "SignIn": {
       "description": "Inicia sesión para continuar a tu cuenta",

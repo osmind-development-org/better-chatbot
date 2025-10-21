@@ -1,5 +1,7 @@
 # Using Docker
 
+> **⚠️ Note:** _This Docker guide may be outdated and needs to be updated. Please verify instructions and check for the latest changes in the repository or consult project maintainers if you encounter any issues._
+
 Docker provides a streamlined and efficient method for managing containerized applications, making it an ideal choice for deploying this project.
 
 ## Requirements
@@ -19,18 +21,16 @@ Docker provides a streamlined and efficient method for managing containerized ap
     ```
 
 2.  **Set up Environment Variables:**
-    Run `pnpm initial:env` to generate the `.env` file.  
+    Run `pnpm initial:env` to generate the `.env` file.
     Then, enter the API keys only for the LLM providers you plan to use.
 
-    You can generate an authentication secret (`BETTER_AUTH_SECRET`) with the command:  
+    You can generate an authentication secret (`BETTER_AUTH_SECRET`) with the command:
     `pnpx auth secret`
 
-    For the database, Docker will handle all necessary configuration automatically,  
+    For the database, Docker will handle all necessary configuration automatically,
     so the default `docker/.env` file is sufficient.
 
-
-
-1.  **Build and Start the Container:**
+3.  **Build and Start the Container:**
     From the project's root directory, build the Docker image and start the container in detached mode (running in the background):
 
     ```sh

@@ -7,7 +7,7 @@
     "agentInstructionsLabel": "N'hésitez pas à écrire le rôle, la personnalité, les directives, les connaissances, etc. de l'agent.",
     "agentInstructionsPlaceholder": "Cet agent aide à l'analyse boursière. Il utilise des outils de recherche web pour obtenir des informations boursières...",
     "agentNameAndIconLabel": "Donnez un nom et une icône à votre agent.",
-    "agentNamePlaceholder": "better-agent",
+    "agentNamePlaceholder": "ozzie-agent",
     "agentRolePlaceholder": "analyse boursière",
     "agentSettingsDescription": "À partir d'ici, ce sont des paramètres qui peuvent affecter l'agent.",
     "agentToolsLabel": "Ajoutez des outils que cet agent peut utiliser.",
@@ -70,7 +70,7 @@
   },
   "Auth": {
     "Intro": {
-      "description": "Bienvenue sur better-chatbot. Connectez-vous pour découvrir nos outils de conversation alimentés par l'IA."
+      "description": "Bienvenue sur Ozzie. Connectez-vous pour découvrir nos outils de conversation alimentés par l'IA."
     },
     "SignIn": {
       "description": "Connectez-vous pour continuer vers votre compte",

@@ -11,7 +11,7 @@ TAG=latest
 
 # Default target - show help
 help:
-	@echo "Better Chatbot Development Commands"
+	@echo "Ozzie Development Commands"
 	@echo ""
 	@echo "Development:"
 	@echo "  make install        Install dependencies"

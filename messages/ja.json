@@ -7,7 +7,7 @@
     "agentInstructionsLabel": "このエージェントの役割、性格、指針、知識などを自由に書いてください。",
     "agentInstructionsPlaceholder": "このエージェントは株式分析をサポートします。ウェブ検索ツールを活用して株式情報を取得します...",
     "agentNameAndIconLabel": "エージェントに名前とアイコンを付けてください。",
-    "agentNamePlaceholder": "better-agent",
+    "agentNamePlaceholder": "ozzie-agent",
     "agentRolePlaceholder": "株式分析",
     "agentSettingsDescription": "ここからは、エージェントに影響を与える可能性のある設定です。",
     "agentToolsLabel": "このエージェントが使用できるツールを追加してください。",
@@ -70,7 +70,7 @@
   },
   "Auth": {
     "Intro": {
-      "description": "better-chatbot へようこそ。AIを活用した会話ツールを体験するためにサインインしてください。"
+      "description": "Ozzie へようこそ。AIを活用した会話ツールを体験するためにサインインしてください。"
     },
     "SignIn": {
       "description": "アカウントにサインインして続行",
