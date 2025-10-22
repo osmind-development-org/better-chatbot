@@ -23,6 +23,22 @@
         {
           "name": "DISABLE_SIGN_UP",
           "value": "1"
+        },
+        {
+          "name": "FILE_STORAGE_TYPE",
+          "value": "s3"
+        },
+        {
+          "name": "FILE_STORAGE_S3_REGION",
+          "value": "us-west-2"
+        },
+        {
+          "name": "FILE_STORAGE_S3_BUCKET",
+          "value": "osmind-better-chat-prod"
+        },
+        {
+          "name": "FILE_STORAGE_PREFIX",
+          "value": "uploads"
         }
       ],
       "essential": true,
