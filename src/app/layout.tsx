@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Ozzie",
-  description: "Ozzie is a chatbot that uses the Tools to answer questions.",
+  description: "Ozzie is our internal AI assistant",
 };
 
 export default async function RootLayout({
