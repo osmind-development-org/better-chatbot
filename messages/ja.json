@@ -7,7 +7,7 @@
     "agentInstructionsLabel": "このエージェントの役割、性格、指針、知識などを自由に書いてください。",
     "agentInstructionsPlaceholder": "このエージェントは株式分析をサポートします。ウェブ検索ツールを活用して株式情報を取得します...",
     "agentNameAndIconLabel": "エージェントに名前とアイコンを付けてください。",
-    "agentNamePlaceholder": "better-agent",
+    "agentNamePlaceholder": "ozzie-agent",
     "agentRolePlaceholder": "株式分析",
     "agentSettingsDescription": "ここからは、エージェントに影響を与える可能性のある設定です。",
     "agentToolsLabel": "このエージェントが使用できるツールを追加してください。",
@@ -70,7 +70,7 @@
   },
   "Auth": {
     "Intro": {
-      "description": "better-chatbot へようこそ。AIを活用した会話ツールを体験するためにサインインしてください。"
+      "description": "Ozzie へようこそ。AIを活用した会話ツールを体験するためにサインインしてください。"
     },
     "SignIn": {
       "description": "アカウントにサインインして続行",
@@ -179,13 +179,13 @@
       "saveAsPreset": "プリセットとして保存",
       "saveAsPresetDescription": "現在のツール設定をプリセットとして保存します。",
       "searchOptions": "検索オプション",
-      "searchOptionsDescription": "検索結果の最大数、検索日時など、チャットボットに検索オプションを渡すことができます。",
+      "searchOptionsDescription": "検索結果の最大数、検索日時など、Ozzie に検索オプションを渡すことができます。",
       "searchedTheWeb": "ウェブを検索しました",
       "selectToolMode": "ツールモードを選択",
       "toolModeDescription": "ツールの使用方法を選択:\n• 自動: AIがツールの使用を自動で決定\n• 手動: ツール使用前に許可を求める\n• なし: すべてのツールを無効化",
       "toolPresets": "ツールプリセット",
       "toolsSetup": "ツール設定",
-      "toolsSetupDescription": "チャットボットが使用できるツールを選択してください。\nチャットボットは選択されたツールを自分の判断で使用します。\n\n@mention を使って特定のツールの使用を強制することもできます。",
+      "toolsSetupDescription": "Ozzie が使用できるツールを選択してください。\nOzzie は選択されたツールを自分の判断で使用します。\n\n@mention を使って特定のツールの使用を強制することもできます。",
       "webSearching": "ウェブを検索中..."
     },
     "VoiceChat": {
@@ -402,14 +402,14 @@
     "arrangeNodes": "自動レイアウト",
     "autoSaveDescription": "10秒ごとに自動保存されます",
     "createWorkflow": "ワークフローを作成",
-    "createWorkflowDescription": "チャットボットの強力なツールとしてワークフローを作成します。",
+    "createWorkflowDescription": "Ozzie の強力なツールとしてワークフローを作成します。",
     "defaultValuePlaceholder": "デフォルトの{type}値を入力...",
     "describeOutputDataRequest": "このノードが出力すべき内容を表すサンプルJSONデータを提供してください\n\n例: {eg}",
     "description": "説明",
     "descriptionAndSchema": "説明とスキーマ",
-    "descriptionPlaceholder": "チャットボットはこれをツールの説明として見ます",
+    "descriptionPlaceholder": "Ozzie はこれをツールの説明として見ます",
     "draft": "下書き",
-    "draftDescription": "現在は下書き状態です。\n\n公開をクリックしてチャットボットで利用可能にします\n（ただし編集できなくなります）。",
+    "draftDescription": "現在は下書き状態です。\n\n公開をクリックして Ozzie で利用可能にします\n（ただし編集できなくなります）。",
     "elseDescription": "条件が満たされない場合、実行するロジックを定義します。",
     "elseIfDescription": "条件が満たされない場合、実行するロジックを定義します。",
     "example": {
@@ -426,18 +426,18 @@
       "availableNodesTitle": "利用可能なノード",
       "buildAutomationDescription": "様々なノードを接続して複雑なタスクを自動化します。各ノードは特定の機能を担当し、データが順次流れて処理されます。",
       "buildAutomationTitle": "ノード接続による自動化構築",
-      "chatbotToolDescription": "ワークフローの主な目的は、チャットボットの会話でツールとして使用することです。反復的なタスクをワークフローに変換して、チャット中に簡単に実行できます。",
-      "chatbotToolTitle": "チャットボットツールとして活用",
-      "ctaMessage": "今すぐワークフローを作成してチャットボットの機能を拡張しましょう！",
-      "exampleDescription": "「メール作成 → 翻訳 → 送信」ワークフローを作成しておけば、チャットボットの会話で「@メール_ワークフロー」で簡単に実行できます。",
+      "chatbotToolDescription": "ワークフローの主な目的は、Ozzie との会話でツールとして使用することです。反復的なタスクをワークフローに変換して、チャット中に簡単に実行できます。",
+      "chatbotToolTitle": "Ozzie ツールとして活用",
+      "ctaMessage": "今すぐワークフローを作成して Ozzie の機能を拡張しましょう！",
+      "exampleDescription": "「メール作成 → 翻訳 → 送信」ワークフローを作成しておけば、Ozzie との会話で「@メール_ワークフロー」で簡単に実行できます。",
       "exampleTitle": "使用例",
-      "parameterBasedDescription": "入力ノードはトリガーではなく、パラメータ構造を定義します。チャットボットがこのワークフローをツールとして呼び出すときに必要なデータ形式を指定します。",
+      "parameterBasedDescription": "入力ノードはトリガーではなく、パラメータ構造を定義します。Ozzie がこのワークフローをツールとして呼び出すときに必要なデータ形式を指定します。",
       "parameterBasedTitle": "️ パラメータベースの開始",
       "soonMessage": "近日公開予定です。",
       "upcomingNodesTitle": "近日公開予定のノード"
     },
     "inputFields": "入力フィールド",
-    "inputFieldsDescription": "このワークフローのパラメータスキーマを定義します。\n\nチャットボットがこれをツールとして使用する際、\nこのスキーマに従って値を提供します。",
+    "inputFieldsDescription": "このワークフローのパラメータスキーマを定義します。\n\nOzzie がこれをツールとして使用する際、\nこのスキーマに従って値を提供します。",
     "inputNodeCannotBeDeleted": "入力ノードは削除できません",
     "jsonSchemaEditorDescription": "AI支援による直接的なJSONスキーマ編集。複雑なネストした構造と配列をサポートします。",
     "jsonSchemaGeneratedSuccessfully": "JSONスキーマが正常に生成されました！",
@@ -445,7 +445,7 @@
       "code": "前のノードデータにアクセスできるカスタムコードスクリプトを実行します。\n\nワークフロー内でJavaScript、Python、その他の言語を実行します（近日公開）。",
       "condition": "データ評価に基づいてワークフローを分岐する条件ロジックを追加します。\n\n異なるシナリオやデータ条件を処理するif-elseロジックを作成します。",
       "http": "HTTPリクエストを通じて外部APIやWebサービスからデータを取得します。\n\nREST API、Webhook、サードパーティサービスと統合します。",
-      "input": "チャットボットがこのワークフローをツールとして使用する際に提供する入力パラメータを定義します。\n\nツール実行のためのデータ構造と検証ルールを指定します。",
+      "input": "Ozzie がこのワークフローをツールとして使用する際に提供する入力パラメータを定義します。\n\nツール実行のためのデータ構造と検証ルールを指定します。",
       "llm": "AIモデルを使用してテキストや構造化データを生成します。\n\n'/'メンションで前のノード出力を参照してコンテキスト認識レスポンスを作成します。\n\n構造化出力を使用してデータの変換、フォーマット、検証を行う - 単なるテキスト生成ではありません。",
       "note": "ワークフローロジックを整理するためのドキュメントとコメントを追加します。\n\nチームメンバーが複雑なワークフロープロセスを理解するのに役立ちます。",
       "output": "ワークフロー実行の最終結果を収集して返します。\n\n複数のノードからのデータを最終ツールレスポンスに結合します。",
@@ -469,7 +469,7 @@
     "public": "公開",
     "publicDescription": "誰でもこのワークフローを表示、編集、ツールとして使用できます。",
     "publish": "公開",
-    "publishedDescription": "現在公開されており、チャットボットで利用可能です。\n\n下書きをクリックして編集可能にします\n（ただしチャットボットで利用できなくなります）。",
+    "publishedDescription": "現在公開されており、Ozzie で利用可能です。\n\n下書きをクリックして編集可能にします\n（ただし Ozzie で利用できなくなります）。",
     "readonly": "読み取り専用",
     "readonlyDescription": "他の人は表示してツールとして使用できますが、編集できるのはあなただけです。",
     "saveSchema": "スキーマを保存",
@@ -487,6 +487,6 @@
     "visibilityDescription": "このワークフローにアクセスして変更できる人を制御します",
     "visibilityUpdated": "公開設定が正常に更新されました",
     "workflowDescription": "これらは会話中にトリガーして複雑なタスクを自動化できます。",
-    "workflowNamePlaceholder": "チャットボットはこれをツール名として認識します"
+    "workflowNamePlaceholder": "Ozzie はこれをツール名として認識します"
   }
 }

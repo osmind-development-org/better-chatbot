@@ -7,7 +7,7 @@
     "agentInstructionsLabel": "请自由描述此智能体的角色、性格、指导原则、知识等。",
     "agentInstructionsPlaceholder": "此智能体帮助进行股票分析。它使用网络搜索工具来获取股票信息...",
     "agentNameAndIconLabel": "为您的智能体设置名称和图标。",
-    "agentNamePlaceholder": "better-agent",
+    "agentNamePlaceholder": "ozzie-agent",
     "agentRolePlaceholder": "股票分析",
     "agentSettingsDescription": "以下是可能影响智能体的设置。",
     "agentToolsLabel": "添加此智能体可以使用的工具。",
@@ -70,7 +70,7 @@
   },
   "Auth": {
     "Intro": {
-      "description": "欢迎来到 MCP 聊天机器人。登录以体验我们的 AI 驱动的对话工具。"
+      "description": "欢迎来到 Ozzie。登录以体验我们的 AI 驱动的对话工具。"
     },
     "SignIn": {
       "description": "登录您的账户以继续",
@@ -179,13 +179,13 @@
       "saveAsPreset": "保存为预设",
       "saveAsPresetDescription": "将当前工具配置保存为预设。",
       "searchOptions": "搜索选项",
-      "searchOptionsDescription": "您可以向聊天机器人传递搜索选项，例如搜索结果的最大数量、搜索日期等。",
+      "searchOptionsDescription": "您可以向 Ozzie 传递搜索选项，例如搜索结果的最大数量、搜索日期等。",
       "searchedTheWeb": "搜索网络",
       "selectToolMode": "选择工具模式",
       "toolModeDescription": "选择工具使用方式:\n• 自动: AI 自动决定何时使用工具\n• 手动: 使用工具前询问许可\n• 无: 禁用所有工具",
       "toolPresets": "工具预设",
       "toolsSetup": "工具设置",
-      "toolsSetupDescription": "选择聊天机器人可以使用的工具。\n聊天机器人将根据自己的判断使用选定的工具。\n\n您也可以通过 @mention 强制使用特定工具。",
+      "toolsSetupDescription": "选择 Ozzie 可以使用的工具。\nOzzie 将根据自己的判断使用选定的工具。\n\n您也可以通过 @mention 强制使用特定工具。",
       "webSearching": "正在搜索网络..."
     },
     "VoiceChat": {
@@ -403,14 +403,14 @@
     "arrangeNodes": "自动布局",
     "autoSaveDescription": "每10秒自动保存",
     "createWorkflow": "创建工作流",
-    "createWorkflowDescription": "为您的聊天机器人创建强大的工具工作流。",
+    "createWorkflowDescription": "为 Ozzie 创建强大的工具工作流。",
     "defaultValuePlaceholder": "输入默认 {type} 值...",
     "describeOutputDataRequest": "提供代表此节点应输出内容的示例 JSON 数据\n\n示例: {eg}",
     "description": "描述",
     "descriptionAndSchema": "描述和架构",
-    "descriptionPlaceholder": "聊天机器人将看到此作为工具描述",
+    "descriptionPlaceholder": "Ozzie 将看到此作为工具描述",
     "draft": "草稿",
-    "draftDescription": "当前处于草稿状态。\n\n点击发布使其对聊天机器人可用\n（但不再可编辑）。",
+    "draftDescription": "当前处于草稿状态。\n\n点击发布使其对 Ozzie 可用\n（但不再可编辑）。",
     "elseDescription": "如果条件不满足，定义要执行的逻辑。",
     "elseIfDescription": "如果条件不满足，定义要执行的逻辑。",
     "example": {
@@ -427,18 +427,18 @@
       "availableNodesTitle": "可用节点",
       "buildAutomationDescription": "连接各种节点来自动化复杂任务。每个节点处理特定功能，数据按顺序流动处理。",
       "buildAutomationTitle": "通过连接节点构建自动化",
-      "chatbotToolDescription": "工作流的主要目的是在聊天机器人对话中用作工具。将重复性任务转换为工作流，在聊天中轻松执行。",
-      "chatbotToolTitle": "用作聊天机器人工具",
-      "ctaMessage": "现在就开始创建工作流来扩展您的聊天机器人能力！",
-      "exampleDescription": "创建一个\"邮件编写 → 翻译 → 发送\"工作流，然后在聊天机器人对话中用\"@邮件_工作流\"轻松执行。",
+      "chatbotToolDescription": "工作流的主要目的是在与 Ozzie 的对话中用作工具。将重复性任务转换为工作流，在聊天中轻松执行。",
+      "chatbotToolTitle": "用作 Ozzie 工具",
+      "ctaMessage": "现在就开始创建工作流来扩展 Ozzie 的能力！",
+      "exampleDescription": "创建一个\"邮件编写 → 翻译 → 发送\"工作流，然后在与 Ozzie 的对话中用\"@邮件_工作流\"轻松执行。",
       "exampleTitle": "使用示例",
-      "parameterBasedDescription": "输入节点定义参数结构，而不是触发器。它们指定聊天机器人将此工作流用作工具时所需的数据格式。",
+      "parameterBasedDescription": "输入节点定义参数结构，而不是触发器。它们指定 Ozzie 将此工作流用作工具时所需的数据格式。",
       "parameterBasedTitle": "️ 基于参数的开始",
       "soonMessage": "即将推出。",
       "upcomingNodesTitle": "即将推出的节点"
     },
     "inputFields": "输入字段",
-    "inputFieldsDescription": "定义此工作流的参数架构。\n\n当聊天机器人使用此作为工具时，\n它将根据此架构提供值。",
+    "inputFieldsDescription": "定义此工作流的参数架构。\n\n当 Ozzie 使用此作为工具时，\n它将根据此架构提供值。",
     "inputNodeCannotBeDeleted": "输入节点无法删除",
     "jsonSchemaEditorDescription": "在 AI 辅助下直接编辑 JSON 模式。支持复杂的嵌套结构和数组。",
     "jsonSchemaGeneratedSuccessfully": "JSON 模式生成成功！",
@@ -446,7 +446,7 @@
       "code": "执行可访问前一个节点数据的自定义代码脚本。\n\n在工作流中运行 JavaScript、Python 或其他语言（即将推出）。",
       "condition": "基于数据评估添加条件逻辑来分支您的工作流。\n\n创建 if-else 逻辑来处理不同的场景和数据条件。",
       "http": "通过 HTTP 请求从外部 API 和 Web 服务获取数据。\n\n与 REST API、webhook 和第三方服务集成。",
-      "input": "定义聊天机器人将此工作流用作工具时提供的输入参数。\n\n指定工具执行的数据结构和验证规则。",
+      "input": "定义 Ozzie 将此工作流用作工具时提供的输入参数。\n\n指定工具执行的数据结构和验证规则。",
       "llm": "使用 AI 模型生成文本或结构化数据。\n\n使用 '/' 提及引用前一个节点的输出，创建上下文感知的响应。\n\n使用结构化输出进行数据转换、格式化和验证 - 不仅仅是文本生成。",
       "note": "添加文档和注释来组织您的工作流逻辑。\n\n帮助团队成员理解复杂的工作流过程。",
       "output": "收集并返回工作流执行的最终结果。\n\n将多个节点的数据合并为最终工具响应。",
@@ -470,7 +470,7 @@
     "public": "公开",
     "publicDescription": "任何人都可以查看、编辑和使用此工作流作为工具。",
     "publish": "发布",
-    "publishedDescription": "当前已发布并对聊天机器人可用。\n\n点击草稿使其可编辑\n（但对聊天机器人不可用）。",
+    "publishedDescription": "当前已发布并对 Ozzie 可用。\n\n点击草稿使其可编辑\n（但对 Ozzie 不可用）。",
     "readonly": "只读",
     "readonlyDescription": "其他人可以查看和用作工具，但只有您可以编辑。",
     "saveSchema": "保存模式",
@@ -488,6 +488,6 @@
     "visibilityDescription": "控制谁可以访问和修改此工作流",
     "visibilityUpdated": "可见性已成功更新",
     "workflowDescription": "这些可以在对话中触发以自动化复杂任务。",
-    "workflowNamePlaceholder": "聊天机器人将识别此为工具名称"
+    "workflowNamePlaceholder": "Ozzie 将识别此为工具名称"
   }
 }

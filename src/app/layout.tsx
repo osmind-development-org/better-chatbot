@@ -18,9 +18,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "better-chatbot",
-  description:
-    "Better Chatbot is a chatbot that uses the Tools to answer questions.",
+  title: "Ozzie",
+  description: "Ozzie is our internal AI assistant",
 };
 
 export default async function RootLayout({

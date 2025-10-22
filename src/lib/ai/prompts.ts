@@ -40,7 +40,7 @@ ${toolsList}
 
 6. Output Generation: Return a structured object with these fields:
 - name: Concise, descriptive name reflecting the agent's primary function
-- description: 1-2 sentences capturing the unique value and primary benefit to users  
+- description: 1-2 sentences capturing the unique value and primary benefit to users
 - role: Precise domain-specific expertise area
 - instructions: The comprehensive system prompt from steps 2-5
 - tools: Array of selected tool names from step 4
@@ -53,8 +53,7 @@ export const buildUserSystemPrompt = (
   userPreferences?: UserPreferences,
   agent?: Agent,
 ) => {
-  const assistantName =
-    agent?.name || userPreferences?.botName || "better-chatbot";
+  const assistantName = agent?.name || userPreferences?.botName || "Ozzie";
   const currentTime = format(new Date(), "EEEE, MMMM d, yyyy 'at' h:mm:ss a");
 
   let prompt = `You are ${assistantName}`;

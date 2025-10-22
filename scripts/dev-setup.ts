@@ -71,7 +71,7 @@ function buildEnvFile(cfg: Record<string, string>): string {
 }
 
 async function main() {
-  console.log("🚀 Better Chatbot Dev Setup\n");
+  console.log("🚀 Ozzie Dev Setup\n");
 
   // Check for existing custom .env
   if (fs.existsSync(ENV_PATH)) {

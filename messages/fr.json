@@ -7,7 +7,7 @@
     "agentInstructionsLabel": "N'hésitez pas à écrire le rôle, la personnalité, les directives, les connaissances, etc. de l'agent.",
     "agentInstructionsPlaceholder": "Cet agent aide à l'analyse boursière. Il utilise des outils de recherche web pour obtenir des informations boursières...",
     "agentNameAndIconLabel": "Donnez un nom et une icône à votre agent.",
-    "agentNamePlaceholder": "better-agent",
+    "agentNamePlaceholder": "ozzie-agent",
     "agentRolePlaceholder": "analyse boursière",
     "agentSettingsDescription": "À partir d'ici, ce sont des paramètres qui peuvent affecter l'agent.",
     "agentToolsLabel": "Ajoutez des outils que cet agent peut utiliser.",
@@ -70,7 +70,7 @@
   },
   "Auth": {
     "Intro": {
-      "description": "Bienvenue sur better-chatbot. Connectez-vous pour découvrir nos outils de conversation alimentés par l'IA."
+      "description": "Bienvenue sur Ozzie. Connectez-vous pour découvrir nos outils de conversation alimentés par l'IA."
     },
     "SignIn": {
       "description": "Connectez-vous pour continuer vers votre compte",
@@ -179,13 +179,13 @@
       "saveAsPreset": "Enregistrer comme Préréglage",
       "saveAsPresetDescription": "Enregistrer la configuration actuelle des outils comme préréglage.",
       "searchOptions": "Options de Recherche",
-      "searchOptionsDescription": "Vous pouvez passer des options de recherche au chatbot, comme le nombre maximum de résultats de recherche, la date de recherche, etc.",
+      "searchOptionsDescription": "Vous pouvez passer des options de recherche à Ozzie, comme le nombre maximum de résultats de recherche, la date de recherche, etc.",
       "searchedTheWeb": "Recherché sur le web",
       "selectToolMode": "Sélectionner le mode d'outils",
       "toolModeDescription": "Choisissez comment les outils sont utilisés:\n• Auto: L'IA décide quand utiliser les outils\n• Manuel: Demande permission avant d'utiliser les outils\n• Aucun: Désactive tous les outils",
       "toolPresets": "Préréglages d'Outils",
       "toolsSetup": "Configuration des Outils",
-      "toolsSetupDescription": "Sélectionnez les outils que le chatbot peut utiliser.\nLe chatbot utilisera les outils sélectionnés selon son propre jugement.\n\nVous pouvez aussi forcer l'utilisation d'outils spécifiques via @mention.",
+      "toolsSetupDescription": "Sélectionnez les outils qu'Ozzie peut utiliser.\nOzzie utilisera les outils sélectionnés selon son propre jugement.\n\nVous pouvez aussi forcer l'utilisation d'outils spécifiques via @mention.",
       "webSearching": "Recherche sur le web..."
     },
     "VoiceChat": {
@@ -402,14 +402,14 @@
     "arrangeNodes": "Auto Layout",
     "autoSaveDescription": "Sauvegarde automatique toutes les 10 secondes",
     "createWorkflow": "Créer Flux de Travail",
-    "createWorkflowDescription": "Créez des flux de travail comme outils puissants pour votre chatbot.",
+    "createWorkflowDescription": "Créez des flux de travail comme outils puissants pour Ozzie.",
     "defaultValuePlaceholder": "Entrez la valeur {type} par défaut...",
     "describeOutputDataRequest": "Fournissez des données JSON d'exemple qui représentent ce que ce nœud devrait produire\n\nExemple: {eg}",
     "description": "Description",
     "descriptionAndSchema": "Description et Schéma",
-    "descriptionPlaceholder": "Le chatbot verra ceci comme description d'outil",
+    "descriptionPlaceholder": "Ozzie verra ceci comme description d'outil",
     "draft": "Brouillon",
-    "draftDescription": "Actuellement en Brouillon.\n\nCliquez sur Publier pour le rendre disponible au chatbot\n(mais plus modifiable).",
+    "draftDescription": "Actuellement en Brouillon.\n\nCliquez sur Publier pour le rendre disponible à Ozzie\n(mais plus modifiable).",
     "elseDescription": "Si la condition n'est pas remplie, la logique à exécuter est définie.",
     "elseIfDescription": "Si la condition n'est pas remplie, la logique à exécuter est définie.",
     "example": {
@@ -426,18 +426,18 @@
       "availableNodesTitle": "Nœuds Disponibles",
       "buildAutomationDescription": "Connectez divers nœuds pour automatiser des tâches complexes. Chaque nœud gère des fonctions spécifiques, et les données circulent séquentiellement pour le traitement.",
       "buildAutomationTitle": "Construire l'Automatisation en Connectant les Nœuds",
-      "chatbotToolDescription": "Le but principal des flux de travail est de les utiliser comme outils dans les conversations de chatbot. Transformez les tâches répétitives en flux de travail pour une exécution facile pendant les chats.",
-      "chatbotToolTitle": "Utiliser comme Outils de Chatbot",
-      "ctaMessage": "Commencez à créer des flux de travail maintenant pour étendre les capacités de votre chatbot !",
-      "exampleDescription": "Créez un flux de travail \"Écrire Email → Traduire → Envoyer\", puis exécutez-le facilement dans les conversations de chatbot avec \"@email_workflow\".",
+      "chatbotToolDescription": "Le but principal des flux de travail est de les utiliser comme outils dans les conversations avec Ozzie. Transformez les tâches répétitives en flux de travail pour une exécution facile pendant les chats.",
+      "chatbotToolTitle": "Utiliser comme Outils d'Ozzie",
+      "ctaMessage": "Commencez à créer des flux de travail maintenant pour étendre les capacités d'Ozzie !",
+      "exampleDescription": "Créez un flux de travail \"Écrire Email → Traduire → Envoyer\", puis exécutez-le facilement dans les conversations avec Ozzie avec \"@email_workflow\".",
       "exampleTitle": "Exemple d'Utilisation",
-      "parameterBasedDescription": "Les nœuds d'entrée définissent des structures de paramètres, pas des déclencheurs. Ils spécifient le format de données nécessaire quand le chatbot appelle ce flux de travail comme outil.",
+      "parameterBasedDescription": "Les nœuds d'entrée définissent des structures de paramètres, pas des déclencheurs. Ils spécifient le format de données nécessaire quand Ozzie appelle ce flux de travail comme outil.",
       "parameterBasedTitle": "️ Démarrage Basé sur les Paramètres",
       "soonMessage": "Bientôt disponible.",
       "upcomingNodesTitle": "Nœuds à Venir"
     },
     "inputFields": "Champs d'Entrée",
-    "inputFieldsDescription": "Définissez le schéma de paramètres pour ce flux de travail.\n\nQuand le chatbot utilisera ceci comme outil,\nil fournira des valeurs selon ce schéma.",
+    "inputFieldsDescription": "Définissez le schéma de paramètres pour ce flux de travail.\n\nQuand Ozzie utilisera ceci comme outil,\nil fournira des valeurs selon ce schéma.",
     "inputNodeCannotBeDeleted": "Le nœud d'entrée ne peut pas être supprimé",
     "jsonSchemaEditorDescription": "Édition directe de schéma JSON avec assistance IA. Supporte les structures imbriquées complexes et les tableaux.",
     "jsonSchemaGeneratedSuccessfully": "Schéma JSON généré avec succès !",
@@ -445,7 +445,7 @@
       "code": "Exécute des scripts de code personnalisé avec accès aux données de nœuds précédents.\n\nExécute JavaScript, Python ou d'autres langages dans votre flux de travail (bientôt disponible).",
       "condition": "Ajoute une logique conditionnelle pour brancher votre flux de travail basé sur l'évaluation des données.\n\nCrée une logique if-else pour gérer différents scénarios et conditions de données.",
       "http": "Récupère des données d'APIs externes et de services web via des requêtes HTTP.\n\nIntègre avec des APIs REST, webhooks et services tiers.",
-      "input": "Définit les paramètres d'entrée que le chatbot fournira en utilisant ce flux de travail comme outil.\n\nSpécifie la structure des données et les règles de validation pour l'exécution de l'outil.",
+      "input": "Définit les paramètres d'entrée qu'Ozzie fournira en utilisant ce flux de travail comme outil.\n\nSpécifie la structure des données et les règles de validation pour l'exécution de l'outil.",
       "llm": "Génère du texte ou des données structurées en utilisant des modèles IA.\n\nRéférence les sorties de nœuds précédents avec des mentions '/' pour créer des réponses conscientes du contexte.\n\nUtilisez Sortie Structurée pour transformer, formater et valider les données - pas seulement pour la génération de texte.",
       "note": "Ajoute de la documentation et des commentaires pour organiser la logique de votre flux de travail.\n\nAide les membres de l'équipe à comprendre les processus complexes de flux de travail.",
       "output": "Collecte et retourne les résultats finaux de l'exécution de votre flux de travail.\n\nCombine les données de plusieurs nœuds dans la réponse finale de l'outil.",
@@ -469,7 +469,7 @@
     "public": "Public",
     "publicDescription": "N'importe qui peut voir, modifier et utiliser ce flux de travail comme outil.",
     "publish": "Publier",
-    "publishedDescription": "Actuellement Publié et disponible pour le chatbot.\n\nCliquez sur Brouillon pour le rendre modifiable\n(mais non disponible pour le chatbot).",
+    "publishedDescription": "Actuellement Publié et disponible pour Ozzie.\n\nCliquez sur Brouillon pour le rendre modifiable\n(mais non disponible pour Ozzie).",
     "readonly": "Lecture Seule",
     "readonlyDescription": "Les autres peuvent voir et utiliser comme outil, mais seul vous pouvez modifier.",
     "saveSchema": "Enregistrer Schéma",
@@ -487,6 +487,6 @@
     "visibilityDescription": "Contrôle qui peut accéder et modifier ce flux de travail",
     "visibilityUpdated": "Visibilité mise à jour avec succès",
     "workflowDescription": "Ceux-ci peuvent être déclenchés pendant les conversations pour automatiser des tâches complexes.",
-    "workflowNamePlaceholder": "Le chatbot reconnaîtra ceci comme nom d'outil"
+    "workflowNamePlaceholder": "Ozzie reconnaîtra ceci comme nom d'outil"
   }
 }

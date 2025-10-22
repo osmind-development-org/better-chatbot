@@ -7,7 +7,7 @@
     "agentInstructionsLabel": "이 에이전트의 역할, 성격, 지침, 지식등 편하게 작성해주세요.",
     "agentInstructionsPlaceholder": "이 에이전트는 주식 분석을 도와줍니다. 웹검색 도구를 활용하여 주식 정보를 얻어옵니다...",
     "agentNameAndIconLabel": "에이전트에게 이름과 아이콘을 붙여주세요.",
-    "agentNamePlaceholder": "better-agent",
+    "agentNamePlaceholder": "ozzie-agent",
     "agentRolePlaceholder": "주식 분석",
     "agentSettingsDescription": "여기부터는 에이전트에게 영향을 줄 수 있는 설정입니다.",
     "agentToolsLabel": "이 에이전트가 사용할 수 있는 도구를 추가해주세요.",
@@ -70,7 +70,7 @@
   },
   "Auth": {
     "Intro": {
-      "description": "better-chatbot에 오신 것을 환영합니다. 우리의 AI 기반 대화 도구를 경험하세요."
+      "description": "Ozzie에 오신 것을 환영합니다. 우리의 AI 기반 대화 도구를 경험하세요."
     },
     "SignIn": {
       "description": "계정에 로그인하여 계속합니다",
@@ -193,13 +193,13 @@
       "saveAsPreset": "프리셋으로 저장",
       "saveAsPresetDescription": "현재 도구 설정을 프리셋으로 저장합니다.",
       "searchOptions": "검색 옵션",
-      "searchOptionsDescription": "검색 결과의 최대 개수, 검색 날짜 등의 검색 옵션을 챗봇에 전달할 수 있습니다.",
+      "searchOptionsDescription": "검색 결과의 최대 개수, 검색 날짜 등의 검색 옵션을 Ozzie에 전달할 수 있습니다.",
       "searchedTheWeb": "참고한 웹 사이트",
       "selectToolMode": "도구 사용 모드",
       "toolModeDescription": "도구 사용 방식을 선택하세요:\n• 자동: AI가 도구 사용 여부를 자동으로 결정\n• 수동: 도구 사용 전 권한 요청\n• 사용 안함: 모든 도구 비활성화",
       "toolPresets": "도구 프리셋",
       "toolsSetup": "도구 설정",
-      "toolsSetupDescription": "chatbot이 사용할 수 있는 도구를 선택하세요.\n선택된 도구를 스스로 판단하여 사용하게 됩니다.\n\n@mention을 하여 직접 특정 도구 사용을 강제 할 수 도 있습니다.",
+      "toolsSetupDescription": "Ozzie가 사용할 수 있는 도구를 선택하세요.\n선택된 도구를 스스로 판단하여 사용하게 됩니다.\n\n@mention을 하여 직접 특정 도구 사용을 강제 할 수 도 있습니다.",
       "webSearching": "웹에서 찾아보는 중..."
     },
     "VoiceChat": {
@@ -417,14 +417,14 @@
     "arrangeNodes": "자동 레이아웃",
     "autoSaveDescription": "10초마다 자동 저장됩니다",
     "createWorkflow": "워크플로우 생성",
-    "createWorkflowDescription": "챗봇을 위한 강력한 도구로 워크플로우를 생성하세요.",
+    "createWorkflowDescription": "Ozzie를 위한 강력한 도구로 워크플로우를 생성하세요.",
     "defaultValuePlaceholder": "기본 {type} 값을 입력하세요...",
     "describeOutputDataRequest": "이 노드가 출력해야 하는 것을 나타내는 예제 JSON 데이터를 제공하세요\n\n예제: {eg}",
     "description": "설명",
     "descriptionAndSchema": "설명 및 스키마",
-    "descriptionPlaceholder": "챗봇이 이를 도구 설명으로 봅니다",
+    "descriptionPlaceholder": "Ozzie가 이를 도구 설명으로 봅니다",
     "draft": "초안",
-    "draftDescription": "현재 초안 상태입니다.\n\n게시를 클릭하여 챗봇에서 사용 가능하게 하세요\n(하지만 더 이상 편집할 수 없습니다).",
+    "draftDescription": "현재 초안 상태입니다.\n\n게시를 클릭하여 Ozzie에서 사용 가능하게 하세요\n(하지만 더 이상 편집할 수 없습니다).",
     "elseDescription": "조건이 충족되지 않을 때 실행할 로직을 정의합니다.",
     "elseIfDescription": "조건이 충족되지 않을 때 실행할 로직을 정의합니다.",
     "example": {
@@ -441,18 +441,18 @@
       "availableNodesTitle": "사용 가능한 노드들",
       "buildAutomationDescription": "다양한 노드들을 연결하여 복잡한 작업을 자동화하세요. 각 노드는 특정 기능을 담당하며, 데이터가 순차적으로 흘러가며 처리됩니다.",
       "buildAutomationTitle": "노드 연결로 자동화 구축",
-      "chatbotToolDescription": "워크플로우의 주요 목적은 챗봇에서 도구로 사용하는 것입니다. 반복적인 작업을 워크플로우로 만들어 대화 중 간단히 실행할 수 있습니다.",
-      "chatbotToolTitle": "챗봇 도구로 활용",
-      "ctaMessage": "지금 바로 워크플로우를 만들어 챗봇의 능력을 확장해보세요!",
-      "exampleDescription": "\"이메일 작성 → 번역 → 전송\" 워크플로우를 만들어두면, 챗봇 대화에서 \"@이메일_워크플로우\"로 간편하게 실행할 수 있습니다.",
+      "chatbotToolDescription": "워크플로우의 주요 목적은 Ozzie와의 대화에서 도구로 사용하는 것입니다. 반복적인 작업을 워크플로우로 만들어 대화 중 간단히 실행할 수 있습니다.",
+      "chatbotToolTitle": "Ozzie 도구로 활용",
+      "ctaMessage": "지금 바로 워크플로우를 만들어 Ozzie의 능력을 확장해보세요!",
+      "exampleDescription": "\"이메일 작성 → 번역 → 전송\" 워크플로우를 만들어두면, Ozzie와의 대화에서 \"@이메일_워크플로우\"로 간편하게 실행할 수 있습니다.",
       "exampleTitle": "사용 예시",
-      "parameterBasedDescription": "Input 노드는 트리거가 아닌 매개변수 구조를 정의합니다. 챗봇이 이 워크플로우를 도구로 호출할 때 필요한 데이터 형식을 지정합니다.",
+      "parameterBasedDescription": "Input 노드는 트리거가 아닌 매개변수 구조를 정의합니다. Ozzie가 이 워크플로우를 도구로 호출할 때 필요한 데이터 형식을 지정합니다.",
       "parameterBasedTitle": "️ 매개변수 기반 시작",
       "soonMessage": "곧 제공될 예정입니다.",
       "upcomingNodesTitle": "곧 출시될 노드"
     },
     "inputFields": "입력 필드",
-    "inputFieldsDescription": "이 워크플로우의 매개변수 스키마를 정의합니다.\n\n챗봇이 이를 도구로 사용할 때,\n이 스키마에 따라 값을 제공합니다.",
+    "inputFieldsDescription": "이 워크플로우의 매개변수 스키마를 정의합니다.\n\nOzzie가 이를 도구로 사용할 때,\n이 스키마에 따라 값을 제공합니다.",
     "inputNodeCannotBeDeleted": "입력 노드는 삭제할 수 없습니다",
     "jsonSchemaEditorDescription": "AI 지원으로 직접 JSON 스키마 편집. 복잡한 중첩 구조와 배열을 지원합니다.",
     "jsonSchemaGeneratedSuccessfully": "JSON 스키마가 성공적으로 생성되었습니다!",
@@ -460,7 +460,7 @@
       "code": "이전 노드 데이터에 접근할 수 있는 커스텀 코드 스크립트를 실행합니다.\n\n워크플로우 내에서 JavaScript, Python 또는 기타 언어를 실행합니다 (곧 출시).",
       "condition": "데이터 평가를 기반으로 워크플로우를 분기하는 조건부 로직을 추가합니다.\n\n다양한 시나리오와 데이터 조건을 처리하기 위한 if-else 로직을 생성합니다.",
       "http": "HTTP 요청을 통해 외부 API 및 웹 서비스에서 데이터를 가져옵니다.\n\nREST API, 웹훅 및 타사 서비스와 통합합니다.",
-      "input": "챗봇이 이 워크플로우를 도구로 사용할 때 제공할 입력 매개변수를 정의합니다.\n\n도구 실행을 위한 데이터 구조와 검증 규칙을 지정합니다.",
+      "input": "Ozzie가 이 워크플로우를 도구로 사용할 때 제공할 입력 매개변수를 정의합니다.\n\n도구 실행을 위한 데이터 구조와 검증 규칙을 지정합니다.",
       "llm": "AI 모델을 사용하여 텍스트나 구조화된 데이터를 생성합니다.\n\n'/' 멘션으로 이전 노드 출력을 참조하여 컨텍스트 인식 응답을 생성합니다.\n\n구조화된 출력을 사용하여 데이터 변환, 포맷팅, 검증 - 단순한 텍스트 생성이 아닙니다.",
       "note": "워크플로우 로직을 정리하기 위한 문서와 주석을 추가합니다.\n\n팀원들이 복잡한 워크플로우 프로세스를 이해하는 데 도움을 줍니다.",
       "output": "워크플로우 실행의 최종 결과를 수집하고 반환합니다.\n\n여러 노드의 데이터를 최종 도구 응답으로 결합합니다.",
@@ -484,7 +484,7 @@
     "public": "공개",
     "publicDescription": "누구나 이 워크플로우를 보고, 편집하고, 도구로 사용할 수 있습니다.",
     "publish": "게시",
-    "publishedDescription": "현재 게시됨 상태이며 챗봇에서 사용 가능합니다.\n\n초안을 클릭하여 편집 가능하게 하세요\n(하지만 챗봇에서 사용할 수 없습니다).",
+    "publishedDescription": "현재 게시됨 상태이며 Ozzie에서 사용 가능합니다.\n\n초안을 클릭하여 편집 가능하게 하세요\n(하지만 Ozzie에서 사용할 수 없습니다).",
     "readonly": "읽기 전용",
     "readonlyDescription": "다른 사람들이 보고 도구로 사용할 수 있지만, 편집은 본인만 가능합니다.",
     "saveSchema": "스키마 저장",
@@ -502,6 +502,6 @@
     "visibilityDescription": "이 워크플로우에 액세스하고 수정할 수 있는 사람을 제어합니다",
     "visibilityUpdated": "가시성이 성공적으로 업데이트되었습니다",
     "workflowDescription": "대화 중에 복잡한 작업을 자동화하기 위해 트리거할 수 있습니다.",
-    "workflowNamePlaceholder": "챗봇이 이를 도구 이름으로 인식합니다"
+    "workflowNamePlaceholder": "Ozzie가 이를 도구 이름으로 인식합니다"
   }
 }
