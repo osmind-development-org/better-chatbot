@@ -120,26 +120,15 @@ describe("convertFileToText", () => {
     expect(result).toContain('"key"');
   });
 
-  it("should provide helpful message for binary Excel files", () => {
+  it("should return generic message for unsupported file types", () => {
     const result = convertFileToText(
       "",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "data.xlsx",
     );
 
-    expect(result).toContain("Excel Spreadsheet");
-    expect(result).toContain("Export the spreadsheet as CSV");
-  });
-
-  it("should provide helpful message for Word documents", () => {
-    const result = convertFileToText(
-      "",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "doc.docx",
-    );
-
-    expect(result).toContain("Word Document");
-    expect(result).toContain("Export as plain text");
+    expect(result).toContain("data.xlsx");
+    expect(result).toContain("cannot be directly processed");
   });
 
   it("should handle unknown file types", () => {

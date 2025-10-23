@@ -27,8 +27,10 @@ describe("validateFileForModel", () => {
       const result = validateFileForModel(file, anthropicModel);
 
       expect(result.allowed).toBe(false);
-      expect(result.error).toContain("data.xlsx");
-      expect(result.error).toContain("Excel");
+      if (!result.allowed) {
+        expect(result.error).toContain("data.xlsx");
+        expect(result.error).toContain("Excel");
+      }
     });
 
     it("should block DOCX files for OpenAI", () => {
@@ -39,8 +41,10 @@ describe("validateFileForModel", () => {
       const result = validateFileForModel(file, openaiModel);
 
       expect(result.allowed).toBe(false);
-      expect(result.error).toContain("document.docx");
-      expect(result.error).toContain("Word");
+      if (!result.allowed) {
+        expect(result.error).toContain("document.docx");
+        expect(result.error).toContain("Word");
+      }
     });
 
     it("should block XLS files", () => {
@@ -48,7 +52,9 @@ describe("validateFileForModel", () => {
       const result = validateFileForModel(file, anthropicModel);
 
       expect(result.allowed).toBe(false);
-      expect(result.error).toContain("old.xls");
+      if (!result.allowed) {
+        expect(result.error).toContain("old.xls");
+      }
     });
 
     it("should block DOC files", () => {
@@ -56,7 +62,9 @@ describe("validateFileForModel", () => {
       const result = validateFileForModel(file, openaiModel);
 
       expect(result.allowed).toBe(false);
-      expect(result.error).toContain("old.doc");
+      if (!result.allowed) {
+        expect(result.error).toContain("old.doc");
+      }
     });
   });
 
@@ -66,9 +74,11 @@ describe("validateFileForModel", () => {
       const result = validateFileForModel(file, anthropicModel);
 
       expect(result.allowed).toBe(true);
-      expect(result.warning).toContain("CSV");
-      expect(result.warning).toContain("converted to plain text");
-      expect(result.warning).toContain("anthropic");
+      if (result.allowed) {
+        expect(result.warning).toContain("CSV");
+        expect(result.warning).toContain("converted to plain text");
+        expect(result.warning).toContain("anthropic");
+      }
     });
 
     it("should allow JSON with warning for OpenAI", () => {
@@ -76,16 +86,20 @@ describe("validateFileForModel", () => {
       const result = validateFileForModel(file, openaiModel);
 
       expect(result.allowed).toBe(true);
-      expect(result.warning).toContain("JSON");
-      expect(result.warning).toContain("openai");
+      if (result.allowed) {
+        expect(result.warning).toContain("JSON");
+        expect(result.warning).toContain("openai");
+      }
     });
 
-    it("should allow TXT files with warning", () => {
+    it("should allow TXT files without warning (plain text needs no conversion)", () => {
       const file = createMockFile("notes.txt", "text/plain");
       const result = validateFileForModel(file, anthropicModel);
 
       expect(result.allowed).toBe(true);
-      expect(result.warning).toContain("Text");
+      if (result.allowed) {
+        expect(result.warning).toBeUndefined();
+      }
     });
 
     it("should allow Markdown files with warning", () => {
@@ -93,7 +107,9 @@ describe("validateFileForModel", () => {
       const result = validateFileForModel(file, openaiModel);
 
       expect(result.allowed).toBe(true);
-      expect(result.warning).toContain("Markdown");
+      if (result.allowed) {
+        expect(result.warning).toContain("Markdown");
+      }
     });
 
     it("should allow XML files with warning", () => {
@@ -101,7 +117,9 @@ describe("validateFileForModel", () => {
       const result = validateFileForModel(file, anthropicModel);
 
       expect(result.allowed).toBe(true);
-      expect(result.warning).toContain("XML");
+      if (result.allowed) {
+        expect(result.warning).toContain("XML");
+      }
     });
   });
 
@@ -111,7 +129,9 @@ describe("validateFileForModel", () => {
       const result = validateFileForModel(file, geminiModel);
 
       expect(result.allowed).toBe(true);
-      expect(result.warning).toBeUndefined();
+      if (result.allowed) {
+        expect(result.warning).toBeUndefined();
+      }
     });
 
     it("should allow JSON without warning for Gemini", () => {
@@ -119,20 +139,23 @@ describe("validateFileForModel", () => {
       const result = validateFileForModel(file, geminiModel);
 
       expect(result.allowed).toBe(true);
-      expect(result.warning).toBeUndefined();
+      if (result.allowed) {
+        expect(result.warning).toBeUndefined();
+      }
     });
 
-    it("should even allow XLSX without warning for Gemini", () => {
+    it("should block XLSX even for Gemini (binary files not supported)", () => {
       const file = createMockFile(
         "data.xlsx",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       );
       const result = validateFileForModel(file, geminiModel);
 
-      // Note: Gemini still doesn't support binary Excel files,
-      // but we allow them through since the provider might handle them
-      expect(result.allowed).toBe(true);
-      expect(result.warning).toBeUndefined();
+      // Even Gemini can't handle binary Excel files well
+      expect(result.allowed).toBe(false);
+      if (!result.allowed) {
+        expect(result.error).toContain("data.xlsx");
+      }
     });
   });
 
@@ -142,7 +165,9 @@ describe("validateFileForModel", () => {
       const result = validateFileForModel(file, anthropicModel);
 
       expect(result.allowed).toBe(true);
-      expect(result.warning).toBeUndefined();
+      if (result.allowed) {
+        expect(result.warning).toBeUndefined();
+      }
     });
 
     it("should allow PDFs without warning", () => {
@@ -150,37 +175,22 @@ describe("validateFileForModel", () => {
       const result = validateFileForModel(file, openaiModel);
 
       expect(result.allowed).toBe(true);
-      expect(result.warning).toBeUndefined();
-    });
-  });
-
-  describe("No model specified", () => {
-    it("should block binary files even without model", () => {
-      const file = createMockFile(
-        "data.xlsx",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      );
-      const result = validateFileForModel(file);
-
-      expect(result.allowed).toBe(false);
-      expect(result.error).toContain("data.xlsx");
-    });
-
-    it("should allow convertible files without model", () => {
-      const file = createMockFile("data.csv", "text/csv");
-      const result = validateFileForModel(file);
-
-      expect(result.allowed).toBe(true);
+      if (result.allowed) {
+        expect(result.warning).toBeUndefined();
+      }
     });
   });
 
   describe("Unknown file types", () => {
-    it("should allow unknown file types", () => {
+    it("should allow unknown file types with warning", () => {
       const file = createMockFile("file.xyz", "application/x-unknown");
       const result = validateFileForModel(file, anthropicModel);
 
       expect(result.allowed).toBe(true);
-      expect(result.warning).toBeUndefined();
+      if (result.allowed) {
+        expect(result.warning).toContain("application/x-unknown");
+        expect(result.warning).toContain("not recognized");
+      }
     });
   });
 });

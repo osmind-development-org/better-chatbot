@@ -214,7 +214,7 @@ export default function PromptInput({
       }
 
       // Validate file type compatibility with current model
-      const validation = validateFileForModel(file, model);
+      const validation = validateFileForModel(file, chatModel!);
       if (!validation.allowed) {
         toast.error(validation.error);
         // Reset input

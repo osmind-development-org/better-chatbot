@@ -24,11 +24,26 @@ const BLOCKED_MIME_TYPES = new Set([
 const CONVERTIBLE_MIME_TYPES = new Set([
   "text/csv",
   "application/json",
-  "text/plain",
   "text/markdown",
   "text/md",
   "text/xml",
   "application/xml",
+]);
+
+/**
+ * File types that are universally supported by all providers (no conversion needed)
+ * These include images, PDFs, and plain text
+ */
+const UNIVERSALLY_SUPPORTED_MIME_TYPES = new Set([
+  // Images
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+  // PDFs
+  "application/pdf",
+  // Plain text
+  "text/plain",
 ]);
 
 /**
@@ -47,33 +62,22 @@ export type FileValidationResult =
  */
 export function validateFileForModel(
   file: File,
-  model?: ChatModel,
+  model: ChatModel,
 ): FileValidationResult {
   const mimeType = file.type;
   const fileName = file.name;
 
-  // If no model specified, allow upload but warn
-  if (!model) {
-    if (BLOCKED_MIME_TYPES.has(mimeType)) {
-      return {
-        allowed: false,
-        error: `${fileName} cannot be processed. Binary files like Excel (.xlsx) and Word (.docx) documents are not supported. Please export as CSV or plain text instead.`,
-      };
-    }
-    return { allowed: true };
-  }
-
-  // If provider supports all file types, allow everything
-  if (PROVIDERS_WITH_FULL_FILE_SUPPORT.has(model.provider)) {
-    return { allowed: true };
-  }
-
-  // Check if file is completely blocked
+  // Check if file is completely blocked (binary files)
   if (BLOCKED_MIME_TYPES.has(mimeType)) {
     return {
       allowed: false,
       error: `${fileName} cannot be processed with ${model.provider}. Binary files like Excel (.xlsx) and Word (.docx) documents are not supported. Please export as CSV or plain text instead.`,
     };
+  }
+
+  // If provider supports all file types, allow everything
+  if (PROVIDERS_WITH_FULL_FILE_SUPPORT.has(model.provider)) {
+    return { allowed: true };
   }
 
   // Check if file will be converted
@@ -85,8 +89,16 @@ export function validateFileForModel(
     };
   }
 
-  // Unknown file type - allow but no guarantee
-  return { allowed: true };
+  // Check if file is universally supported (images, PDFs, plain text)
+  if (UNIVERSALLY_SUPPORTED_MIME_TYPES.has(mimeType)) {
+    return { allowed: true };
+  }
+
+  // Unknown file type - warn that it may not be supported
+  return {
+    allowed: true,
+    warning: `File type "${mimeType}" is not recognized. This upload may not work as expected with ${model.provider}.`,
+  };
 }
 
 /**

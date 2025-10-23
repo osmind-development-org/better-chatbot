@@ -23,12 +23,8 @@ import logger from "logger";
 const CONVERTIBLE_MIME_TYPES = new Set([
   "text/csv",
   "application/json",
-  "text/plain",
   "text/markdown",
   "text/md",
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
-  "application/vnd.ms-excel", // .xls
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
   "text/xml",
   "application/xml",
 ]);
@@ -111,21 +107,6 @@ export function convertTextToFormattedText(
 }
 
 /**
- * Convert XLSX to text (simplified - just note that it's a spreadsheet)
- * For full XLSX parsing, we'd need a library like xlsx
- */
-export function convertSpreadsheetToText(filename?: string): string {
-  return `File: ${filename || "spreadsheet"}
-Type: Excel Spreadsheet (.xlsx)
-
-Note: This is a binary spreadsheet file. To process the data, please:
-1. Export the spreadsheet as CSV format, or
-2. Copy the data and paste it as plain text
-
-The AI cannot directly read binary Excel files.`;
-}
-
-/**
  * Main conversion function that routes to the appropriate converter
  */
 export function convertFileToText(
@@ -140,28 +121,11 @@ export function convertFileToText(
     case "application/json":
       return convertJSONToText(content, filename);
 
-    case "text/plain":
     case "text/markdown":
     case "text/md":
     case "text/xml":
     case "application/xml":
       return convertTextToFormattedText(content, filename, mimeType);
-
-    case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-    case "application/vnd.ms-excel":
-      // These are binary formats that we can't easily convert without a library
-      return convertSpreadsheetToText(filename);
-
-    case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-      // DOCX is also binary
-      return `File: ${filename || "document.docx"}
-Type: Word Document
-
-Note: This is a binary Word document. To process the content, please:
-1. Export as plain text (.txt), or  
-2. Copy the text and paste it directly
-
-The AI cannot directly read binary Word files.`;
 
     default:
       return `File: ${filename || "file"}
