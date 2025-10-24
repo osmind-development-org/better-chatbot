@@ -442,6 +442,7 @@ export default function PromptInput({
               type: "file",
               url: file.url || file.dataUrl || "",
               mediaType: file.mimeType,
+              filename: file.name,
             }) as FileUIPart,
         ),
         {
