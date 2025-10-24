@@ -188,7 +188,7 @@ export function validateFileForModel(
     const fileTypeLabel = getFileTypeLabel(mimeType, extension);
     return {
       allowed: true,
-      warning: `${fileTypeLabel} file will be converted to plain text for ${model.provider}. For better results, consider using Google Gemini which natively supports this file type.`,
+      warning: `${fileTypeLabel} file will be converted to plain text for ${model.provider}. If you encounter issues with this conversion, consider using Google Gemini which natively supports more file types.`,
     };
   }
 
