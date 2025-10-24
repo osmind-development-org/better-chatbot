@@ -2,92 +2,19 @@ import "server-only";
 import { UIMessage, FileUIPart, TextUIPart } from "ai";
 import { ChatModel } from "app-types/chat";
 import logger from "logger";
+import {
+  CONVERTIBLE_MIME_TYPES,
+  CONVERTIBLE_EXTENSIONS_TO_LANGUAGE,
+  PROVIDERS_WITH_FULL_FILE_SUPPORT,
+  getFileExtension,
+} from "./file-support-constants";
 
 /**
  * File conversion utilities for handling file types that aren't natively supported
  * by certain AI providers (Anthropic, OpenAI).
  *
- * Provider Support Matrix:
- * - Anthropic: Images, PDFs only
- * - OpenAI: Images, PDFs only
- * - Google Gemini: Images, PDFs, CSV, JSON, TXT, MD, XML, HTML, CSS, RTF, and more
- *
- * References:
- * - Anthropic: https://docs.anthropic.com/en/docs/build-with-claude/citations
- * - Gemini: https://ai.google.dev/gemini-api/docs/document-processing
+ * See file-support-constants.ts for provider support matrix and shared constants.
  */
-
-/**
- * MIME types that need conversion for providers that don't support them
- */
-const CONVERTIBLE_MIME_TYPES = new Set([
-  "text/csv",
-  "application/json",
-  "text/markdown",
-  "text/md",
-  "text/xml",
-  "application/xml",
-  "text/html",
-  "text/css",
-  // Programming languages - various MIME types
-  "text/x-python",
-  "application/x-python",
-  "text/x-terraform",
-  "application/x-terraform",
-  "text/typescript",
-  "application/typescript",
-  "text/javascript",
-  "application/javascript",
-  "application/x-javascript",
-  "text/x-go",
-  "application/x-go",
-  "text/x-shellscript",
-  "application/x-sh",
-  "text/x-sh",
-]);
-
-/**
- * File extensions that need conversion for non-Gemini providers
- * Maps extension to markdown language identifier for code blocks
- */
-const CONVERTIBLE_EXTENSIONS: Record<string, string> = {
-  // Data formats
-  csv: "csv",
-  json: "json",
-  xml: "xml",
-  md: "markdown",
-  markdown: "markdown",
-  // Web
-  html: "html",
-  htm: "html",
-  css: "css",
-  // Programming languages
-  py: "python",
-  ts: "typescript",
-  tsx: "typescript",
-  js: "javascript",
-  jsx: "javascript",
-  tf: "terraform",
-  go: "go",
-  sh: "bash",
-  bash: "bash",
-};
-
-/**
- * Providers that support most document types natively
- * These providers don't need file conversion
- */
-const PROVIDERS_WITH_FULL_FILE_SUPPORT = new Set([
-  "google", // Gemini supports CSV, JSON, TXT, MD, XML, HTML, CSS, RTF, etc.
-]);
-
-/**
- * Extract file extension from filename
- */
-function getFileExtension(filename: string): string {
-  const parts = filename.toLowerCase().split(".");
-  return parts.length > 1 ? parts[parts.length - 1] : "";
-}
 
 /**
  * Check if a file type needs conversion for the given provider
@@ -115,7 +42,7 @@ export function needsFileConversion(
       !mimeType)
   ) {
     const extension = getFileExtension(filename);
-    return extension in CONVERTIBLE_EXTENSIONS;
+    return extension in CONVERTIBLE_EXTENSIONS_TO_LANGUAGE;
   }
 
   return false;
@@ -166,8 +93,8 @@ function getLanguageIdentifier(filename?: string, mimeType?: string): string {
   // Try to get from file extension first (most reliable)
   if (filename) {
     const extension = getFileExtension(filename);
-    if (extension in CONVERTIBLE_EXTENSIONS) {
-      return CONVERTIBLE_EXTENSIONS[extension];
+    if (extension in CONVERTIBLE_EXTENSIONS_TO_LANGUAGE) {
+      return CONVERTIBLE_EXTENSIONS_TO_LANGUAGE[extension];
     }
   }
 
@@ -223,7 +150,8 @@ export function convertFileToText(
   // Check if this is a convertible file type (by MIME or extension)
   const extension = filename ? getFileExtension(filename) : "";
   const isConvertible =
-    CONVERTIBLE_MIME_TYPES.has(mimeType) || extension in CONVERTIBLE_EXTENSIONS;
+    CONVERTIBLE_MIME_TYPES.has(mimeType) ||
+    extension in CONVERTIBLE_EXTENSIONS_TO_LANGUAGE;
 
   if (isConvertible) {
     // Use generic code converter for all other text-based files

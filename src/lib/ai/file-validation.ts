@@ -7,112 +7,19 @@
  */
 
 import { ChatModel } from "app-types/chat";
-
-/**
- * File types that are completely unsupported (binary formats we can't convert)
- */
-const BLOCKED_MIME_TYPES = new Set([
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
-  "application/vnd.ms-excel", // .xls
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
-  "application/msword", // .doc
-]);
-
-/**
- * File extensions that are blocked (binary formats)
- */
-const BLOCKED_EXTENSIONS = new Set(["xlsx", "xls", "docx", "doc"]);
-
-/**
- * File types that need conversion (will show warning but allow upload)
- */
-const CONVERTIBLE_MIME_TYPES = new Set([
-  "text/csv",
-  "application/json",
-  "text/markdown",
-  "text/md",
-  "text/xml",
-  "application/xml",
-  "text/html",
-  "text/css",
-  // Programming languages - various MIME types
-  "text/x-python",
-  "application/x-python",
-  "text/x-terraform",
-  "application/x-terraform",
-  "text/typescript",
-  "application/typescript",
-  "text/javascript",
-  "application/javascript",
-  "application/x-javascript",
-  "text/x-go",
-  "application/x-go",
-  "text/x-shellscript",
-  "application/x-sh",
-  "text/x-sh",
-]);
-
-/**
- * File extensions that need conversion for non-Gemini providers
- * Maps extension to human-readable label
- */
-const CONVERTIBLE_EXTENSIONS: Record<string, string> = {
-  // Data formats
-  csv: "CSV",
-  json: "JSON",
-  xml: "XML",
-  md: "Markdown",
-  markdown: "Markdown",
-  // Web
-  html: "HTML",
-  htm: "HTML",
-  css: "CSS",
-  // Programming languages
-  py: "Python",
-  ts: "TypeScript",
-  tsx: "TypeScript",
-  js: "JavaScript",
-  jsx: "JavaScript",
-  tf: "Terraform",
-  go: "Go",
-  sh: "Bash",
-  bash: "Bash",
-};
-
-/**
- * File types that are universally supported by all providers (no conversion needed)
- * These include images, PDFs, and plain text
- */
-const UNIVERSALLY_SUPPORTED_MIME_TYPES = new Set([
-  // Images
-  "image/jpeg",
-  "image/png",
-  "image/gif",
-  "image/webp",
-  // PDFs
-  "application/pdf",
-  // Plain text (no conversion needed - already text)
-  "text/plain",
-]);
-
-/**
- * Providers that support most document types natively (no conversion needed)
- */
-const PROVIDERS_WITH_FULL_FILE_SUPPORT = new Set([
-  "google", // Gemini supports CSV, JSON, TXT, MD, XML, HTML, CSS, RTF, etc.
-]);
+import {
+  BLOCKED_MIME_TYPES,
+  BLOCKED_EXTENSIONS,
+  CONVERTIBLE_MIME_TYPES,
+  CONVERTIBLE_EXTENSIONS_TO_LABEL,
+  UNIVERSALLY_SUPPORTED_MIME_TYPES,
+  PROVIDERS_WITH_FULL_FILE_SUPPORT,
+  getFileExtension,
+} from "./file-support-constants";
 
 export type FileValidationResult =
   | { allowed: true; warning?: string }
   | { allowed: false; error: string };
-
-/**
- * Extract file extension from filename
- */
-function getFileExtension(filename: string): string {
-  const parts = filename.toLowerCase().split(".");
-  return parts.length > 1 ? parts[parts.length - 1] : "";
-}
 
 /**
  * Check if a file is convertible based on MIME type or extension
@@ -129,7 +36,7 @@ function isConvertible(mimeType: string, extension: string): boolean {
     mimeType === "text/plain" ||
     !mimeType
   ) {
-    return extension in CONVERTIBLE_EXTENSIONS;
+    return extension in CONVERTIBLE_EXTENSIONS_TO_LABEL;
   }
 
   return false;
@@ -140,8 +47,8 @@ function isConvertible(mimeType: string, extension: string): boolean {
  */
 function getFileTypeLabel(mimeType: string, extension: string): string {
   // Try extension first (more reliable for code files)
-  if (extension in CONVERTIBLE_EXTENSIONS) {
-    return CONVERTIBLE_EXTENSIONS[extension];
+  if (extension in CONVERTIBLE_EXTENSIONS_TO_LABEL) {
+    return CONVERTIBLE_EXTENSIONS_TO_LABEL[extension];
   }
 
   // Fall back to MIME type
