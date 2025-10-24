@@ -27,7 +27,51 @@ const CONVERTIBLE_MIME_TYPES = new Set([
   "text/md",
   "text/xml",
   "application/xml",
+  "text/html",
+  "text/css",
+  // Programming languages - various MIME types
+  "text/x-python",
+  "application/x-python",
+  "text/x-terraform",
+  "application/x-terraform",
+  "text/typescript",
+  "application/typescript",
+  "text/javascript",
+  "application/javascript",
+  "application/x-javascript",
+  "text/x-go",
+  "application/x-go",
+  "text/x-shellscript",
+  "application/x-sh",
+  "text/x-sh",
 ]);
+
+/**
+ * File extensions that need conversion for non-Gemini providers
+ * Maps extension to markdown language identifier for code blocks
+ */
+const CONVERTIBLE_EXTENSIONS: Record<string, string> = {
+  // Data formats
+  csv: "csv",
+  json: "json",
+  xml: "xml",
+  md: "markdown",
+  markdown: "markdown",
+  // Web
+  html: "html",
+  htm: "html",
+  css: "css",
+  // Programming languages
+  py: "python",
+  ts: "typescript",
+  tsx: "typescript",
+  js: "javascript",
+  jsx: "javascript",
+  tf: "terraform",
+  go: "go",
+  sh: "bash",
+  bash: "bash",
+};
 
 /**
  * Providers that support most document types natively
@@ -38,19 +82,43 @@ const PROVIDERS_WITH_FULL_FILE_SUPPORT = new Set([
 ]);
 
 /**
+ * Extract file extension from filename
+ */
+function getFileExtension(filename: string): string {
+  const parts = filename.toLowerCase().split(".");
+  return parts.length > 1 ? parts[parts.length - 1] : "";
+}
+
+/**
  * Check if a file type needs conversion for the given provider
  */
 export function needsFileConversion(
   provider: string,
   mimeType: string,
+  filename?: string,
 ): boolean {
   // If provider supports all file types, no conversion needed
   if (PROVIDERS_WITH_FULL_FILE_SUPPORT.has(provider)) {
     return false;
   }
 
-  // Check if this is a convertible file type
-  return CONVERTIBLE_MIME_TYPES.has(mimeType);
+  // Check if this is a convertible MIME type
+  if (CONVERTIBLE_MIME_TYPES.has(mimeType)) {
+    return true;
+  }
+
+  // For generic MIME types, check file extension as fallback
+  if (
+    filename &&
+    (mimeType === "application/octet-stream" ||
+      mimeType === "text/plain" ||
+      !mimeType)
+  ) {
+    const extension = getFileExtension(filename);
+    return extension in CONVERTIBLE_EXTENSIONS;
+  }
+
+  return false;
 }
 
 /**
@@ -92,16 +160,44 @@ export function convertJSONToText(content: string, filename?: string): string {
 }
 
 /**
- * Convert plain text/markdown to formatted text
+ * Get the language identifier for markdown code blocks based on file extension
  */
-export function convertTextToFormattedText(
+function getLanguageIdentifier(filename?: string, mimeType?: string): string {
+  // Try to get from file extension first (most reliable)
+  if (filename) {
+    const extension = getFileExtension(filename);
+    if (extension in CONVERTIBLE_EXTENSIONS) {
+      return CONVERTIBLE_EXTENSIONS[extension];
+    }
+  }
+
+  // Fall back to MIME type mapping
+  const mimeToLanguage: Record<string, string> = {
+    "text/html": "html",
+    "text/css": "css",
+    "text/xml": "xml",
+    "application/xml": "xml",
+    "text/markdown": "markdown",
+    "text/md": "markdown",
+  };
+
+  if (mimeType && mimeType in mimeToLanguage) {
+    return mimeToLanguage[mimeType];
+  }
+
+  // Default to plain text
+  return "text";
+}
+
+/**
+ * Convert code/text files to formatted text with appropriate language highlighting
+ */
+export function convertCodeToText(
   content: string,
   filename?: string,
-  _mimeType?: string,
+  mimeType?: string,
 ): string {
-  const ext = filename?.split(".").pop()?.toLowerCase();
-  const language = ext === "md" ? "markdown" : ext === "xml" ? "xml" : "text";
-
+  const language = getLanguageIdentifier(filename, mimeType);
   const header = filename ? `File: ${filename}\n\n` : "";
   return header + "```" + language + "\n" + content.trim() + "\n```";
 }
@@ -114,25 +210,31 @@ export function convertFileToText(
   mimeType: string,
   filename?: string,
 ): string {
-  switch (mimeType) {
-    case "text/csv":
-      return convertCSVToText(content, filename);
+  // CSV needs special formatting
+  if (mimeType === "text/csv") {
+    return convertCSVToText(content, filename);
+  }
 
-    case "application/json":
-      return convertJSONToText(content, filename);
+  // JSON needs special formatting (pretty-print)
+  if (mimeType === "application/json") {
+    return convertJSONToText(content, filename);
+  }
 
-    case "text/markdown":
-    case "text/md":
-    case "text/xml":
-    case "application/xml":
-      return convertTextToFormattedText(content, filename, mimeType);
+  // Check if this is a convertible file type (by MIME or extension)
+  const extension = filename ? getFileExtension(filename) : "";
+  const isConvertible =
+    CONVERTIBLE_MIME_TYPES.has(mimeType) || extension in CONVERTIBLE_EXTENSIONS;
 
-    default:
-      return `File: ${filename || "file"}
+  if (isConvertible) {
+    // Use generic code converter for all other text-based files
+    return convertCodeToText(content, filename, mimeType);
+  }
+
+  // Unknown/unsupported file type
+  return `File: ${filename || "file"}
 Type: ${mimeType}
 
 Note: This file type cannot be directly processed. Please provide the content in a supported format (text, CSV, JSON, etc.).`;
-  }
 }
 
 /**
@@ -176,6 +278,7 @@ export async function processMessagesWithFileConversion(
           needsFileConversion(
             chatModel.provider,
             (part as FileUIPart).mediaType || "",
+            (part as FileUIPart).filename,
           ),
       );
 
@@ -196,7 +299,13 @@ export async function processMessagesWithFileConversion(
           const mimeType = filePart.mediaType || "";
 
           // Check if this file needs conversion
-          if (!needsFileConversion(chatModel.provider, mimeType)) {
+          if (
+            !needsFileConversion(
+              chatModel.provider,
+              mimeType,
+              filePart.filename,
+            )
+          ) {
             return part;
           }
 

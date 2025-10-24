@@ -3,28 +3,66 @@ import {
   needsFileConversion,
   convertCSVToText,
   convertJSONToText,
-  convertTextToFormattedText,
+  convertCodeToText,
   convertFileToText,
 } from "./file-conversion";
 
 describe("needsFileConversion", () => {
   it("should return false for Gemini provider (supports all file types)", () => {
-    expect(needsFileConversion("google", "text/csv")).toBe(false);
-    expect(needsFileConversion("google", "application/json")).toBe(false);
-    expect(needsFileConversion("google", "text/plain")).toBe(false);
+    expect(needsFileConversion("google", "text/csv", "data.csv")).toBe(false);
+    expect(
+      needsFileConversion("google", "application/json", "config.json"),
+    ).toBe(false);
+    expect(needsFileConversion("google", "text/plain", "notes.txt")).toBe(
+      false,
+    );
   });
 
   it("should return true for Anthropic with CSV files", () => {
-    expect(needsFileConversion("anthropic", "text/csv")).toBe(true);
+    expect(needsFileConversion("anthropic", "text/csv", "data.csv")).toBe(true);
   });
 
   it("should return true for OpenAI with JSON files", () => {
-    expect(needsFileConversion("openai", "application/json")).toBe(true);
+    expect(
+      needsFileConversion("openai", "application/json", "config.json"),
+    ).toBe(true);
+  });
+
+  it("should return true for programming language files", () => {
+    expect(needsFileConversion("anthropic", "text/x-python", "script.py")).toBe(
+      true,
+    );
+    expect(
+      needsFileConversion("openai", "text/typescript", "component.ts"),
+    ).toBe(true);
+    expect(
+      needsFileConversion("anthropic", "application/javascript", "app.js"),
+    ).toBe(true);
+  });
+
+  it("should return true for files with generic MIME types based on extension", () => {
+    expect(
+      needsFileConversion("anthropic", "application/octet-stream", "script.py"),
+    ).toBe(true);
+    expect(needsFileConversion("openai", "text/plain", "config.ts")).toBe(true);
+    expect(
+      needsFileConversion("anthropic", "application/octet-stream", "main.go"),
+    ).toBe(true);
   });
 
   it("should return false for supported file types (images, PDFs)", () => {
-    expect(needsFileConversion("anthropic", "image/jpeg")).toBe(false);
-    expect(needsFileConversion("openai", "application/pdf")).toBe(false);
+    expect(needsFileConversion("anthropic", "image/jpeg", "photo.jpg")).toBe(
+      false,
+    );
+    expect(needsFileConversion("openai", "application/pdf", "doc.pdf")).toBe(
+      false,
+    );
+  });
+
+  it("should return false for plain text without convertible extension", () => {
+    expect(needsFileConversion("anthropic", "text/plain", "notes.txt")).toBe(
+      false,
+    );
   });
 });
 
@@ -70,10 +108,48 @@ describe("convertJSONToText", () => {
   });
 });
 
-describe("convertTextToFormattedText", () => {
+describe("convertCodeToText", () => {
+  it("should convert Python files with python syntax highlighting", () => {
+    const pyContent = "def hello():\n    print('Hello World')";
+    const result = convertCodeToText(pyContent, "script.py", "text/x-python");
+
+    expect(result).toContain("File: script.py");
+    expect(result).toContain("```python");
+    expect(result).toContain(pyContent);
+  });
+
+  it("should convert TypeScript files with typescript syntax highlighting", () => {
+    const tsContent = "const greeting: string = 'Hello';";
+    const result = convertCodeToText(tsContent, "app.ts", "text/typescript");
+
+    expect(result).toContain("File: app.ts");
+    expect(result).toContain("```typescript");
+    expect(result).toContain(tsContent);
+  });
+
+  it("should convert Go files with go syntax highlighting", () => {
+    const goContent = "package main\n\nfunc main() {}";
+    const result = convertCodeToText(goContent, "main.go", "text/x-go");
+
+    expect(result).toContain("File: main.go");
+    expect(result).toContain("```go");
+    expect(result).toContain(goContent);
+  });
+
+  it("should detect language from extension when MIME type is generic", () => {
+    const pyContent = "print('hello')";
+    const result = convertCodeToText(
+      pyContent,
+      "script.py",
+      "application/octet-stream",
+    );
+
+    expect(result).toContain("```python");
+  });
+
   it("should convert markdown files with markdown syntax highlighting", () => {
     const mdContent = "# Hello World\n\nThis is markdown.";
-    const result = convertTextToFormattedText(mdContent, "readme.md");
+    const result = convertCodeToText(mdContent, "readme.md", "text/markdown");
 
     expect(result).toContain("File: readme.md");
     expect(result).toContain("```markdown");
@@ -82,20 +158,42 @@ describe("convertTextToFormattedText", () => {
 
   it("should convert XML files with xml syntax highlighting", () => {
     const xmlContent = "<root><item>test</item></root>";
-    const result = convertTextToFormattedText(xmlContent, "data.xml");
+    const result = convertCodeToText(xmlContent, "data.xml", "text/xml");
 
     expect(result).toContain("File: data.xml");
     expect(result).toContain("```xml");
     expect(result).toContain(xmlContent);
   });
 
-  it("should convert plain text with text syntax highlighting", () => {
-    const textContent = "Just some plain text";
-    const result = convertTextToFormattedText(textContent, "notes.txt");
+  it("should convert HTML files with html syntax highlighting", () => {
+    const htmlContent = "<html><body>Hello</body></html>";
+    const result = convertCodeToText(htmlContent, "index.html", "text/html");
 
-    expect(result).toContain("File: notes.txt");
-    expect(result).toContain("```text");
-    expect(result).toContain(textContent);
+    expect(result).toContain("File: index.html");
+    expect(result).toContain("```html");
+    expect(result).toContain(htmlContent);
+  });
+
+  it("should convert CSS files with css syntax highlighting", () => {
+    const cssContent = "body { color: red; }";
+    const result = convertCodeToText(cssContent, "styles.css", "text/css");
+
+    expect(result).toContain("File: styles.css");
+    expect(result).toContain("```css");
+    expect(result).toContain(cssContent);
+  });
+
+  it("should convert Bash scripts with bash syntax highlighting", () => {
+    const bashContent = "#!/bin/bash\necho 'Hello'";
+    const result = convertCodeToText(
+      bashContent,
+      "deploy.sh",
+      "text/x-shellscript",
+    );
+
+    expect(result).toContain("File: deploy.sh");
+    expect(result).toContain("```bash");
+    expect(result).toContain(bashContent);
   });
 });
 
@@ -118,6 +216,54 @@ describe("convertFileToText", () => {
 
     expect(result).toContain("JSON");
     expect(result).toContain('"key"');
+  });
+
+  it("should route Python files to code converter", () => {
+    const pyContent = "print('hello')";
+    const result = convertFileToText(pyContent, "text/x-python", "script.py");
+
+    expect(result).toContain("```python");
+    expect(result).toContain(pyContent);
+  });
+
+  it("should route TypeScript files to code converter", () => {
+    const tsContent = "const x: number = 5;";
+    const result = convertFileToText(tsContent, "text/typescript", "app.ts");
+
+    expect(result).toContain("```typescript");
+    expect(result).toContain(tsContent);
+  });
+
+  it("should handle generic MIME types with extension detection", () => {
+    const goContent = "package main";
+    const result = convertFileToText(
+      goContent,
+      "application/octet-stream",
+      "main.go",
+    );
+
+    expect(result).toContain("```go");
+    expect(result).toContain(goContent);
+  });
+
+  it("should handle HTML files", () => {
+    const htmlContent = "<html></html>";
+    const result = convertFileToText(htmlContent, "text/html", "index.html");
+
+    expect(result).toContain("```html");
+    expect(result).toContain(htmlContent);
+  });
+
+  it("should handle Terraform files with generic MIME type", () => {
+    const tfContent = 'resource "aws_instance" "example" {}';
+    const result = convertFileToText(
+      tfContent,
+      "application/octet-stream",
+      "main.tf",
+    );
+
+    expect(result).toContain("```terraform");
+    expect(result).toContain(tfContent);
   });
 
   it("should return generic message for unsupported file types", () => {

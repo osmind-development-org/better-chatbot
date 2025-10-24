@@ -181,6 +181,102 @@ describe("validateFileForModel", () => {
     });
   });
 
+  describe("Programming language files", () => {
+    it("should allow Python files with warning for Anthropic", () => {
+      const file = createMockFile("script.py", "text/x-python");
+      const result = validateFileForModel(file, anthropicModel);
+
+      expect(result.allowed).toBe(true);
+      if (result.allowed) {
+        expect(result.warning).toContain("Python");
+        expect(result.warning).toContain("converted to plain text");
+      }
+    });
+
+    it("should allow TypeScript files with warning for OpenAI", () => {
+      const file = createMockFile("component.ts", "text/typescript");
+      const result = validateFileForModel(file, openaiModel);
+
+      expect(result.allowed).toBe(true);
+      if (result.allowed) {
+        expect(result.warning).toContain("TypeScript");
+      }
+    });
+
+    it("should allow JavaScript files with warning", () => {
+      const file = createMockFile("app.js", "application/javascript");
+      const result = validateFileForModel(file, anthropicModel);
+
+      expect(result.allowed).toBe(true);
+      if (result.allowed) {
+        expect(result.warning).toContain("JavaScript");
+      }
+    });
+
+    it("should allow Go files with warning", () => {
+      const file = createMockFile("main.go", "text/x-go");
+      const result = validateFileForModel(file, openaiModel);
+
+      expect(result.allowed).toBe(true);
+      if (result.allowed) {
+        expect(result.warning).toContain("Go");
+      }
+    });
+
+    it("should allow Bash scripts with warning", () => {
+      const file = createMockFile("deploy.sh", "text/x-shellscript");
+      const result = validateFileForModel(file, anthropicModel);
+
+      expect(result.allowed).toBe(true);
+      if (result.allowed) {
+        expect(result.warning).toContain("Bash");
+      }
+    });
+  });
+
+  describe("Extension-based detection (for generic MIME types from S3)", () => {
+    it("should detect Python files with generic MIME type by extension", () => {
+      const file = createMockFile("script.py", "application/octet-stream");
+      const result = validateFileForModel(file, anthropicModel);
+
+      expect(result.allowed).toBe(true);
+      if (result.allowed) {
+        expect(result.warning).toContain("Python");
+        expect(result.warning).toContain("converted to plain text");
+      }
+    });
+
+    it("should detect TypeScript files with text/plain MIME type", () => {
+      const file = createMockFile("config.ts", "text/plain");
+      const result = validateFileForModel(file, openaiModel);
+
+      expect(result.allowed).toBe(true);
+      if (result.allowed) {
+        expect(result.warning).toContain("TypeScript");
+      }
+    });
+
+    it("should detect Terraform files by extension", () => {
+      const file = createMockFile("main.tf", "application/octet-stream");
+      const result = validateFileForModel(file, anthropicModel);
+
+      expect(result.allowed).toBe(true);
+      if (result.allowed) {
+        expect(result.warning).toContain("Terraform");
+      }
+    });
+
+    it("should not show warning for .txt files with text/plain", () => {
+      const file = createMockFile("notes.txt", "text/plain");
+      const result = validateFileForModel(file, anthropicModel);
+
+      expect(result.allowed).toBe(true);
+      if (result.allowed) {
+        expect(result.warning).toBeUndefined();
+      }
+    });
+  });
+
   describe("Unknown file types", () => {
     it("should allow unknown file types with warning", () => {
       const file = createMockFile("file.xyz", "application/x-unknown");

@@ -19,6 +19,11 @@ const BLOCKED_MIME_TYPES = new Set([
 ]);
 
 /**
+ * File extensions that are blocked (binary formats)
+ */
+const BLOCKED_EXTENSIONS = new Set(["xlsx", "xls", "docx", "doc"]);
+
+/**
  * File types that need conversion (will show warning but allow upload)
  */
 const CONVERTIBLE_MIME_TYPES = new Set([
@@ -28,7 +33,51 @@ const CONVERTIBLE_MIME_TYPES = new Set([
   "text/md",
   "text/xml",
   "application/xml",
+  "text/html",
+  "text/css",
+  // Programming languages - various MIME types
+  "text/x-python",
+  "application/x-python",
+  "text/x-terraform",
+  "application/x-terraform",
+  "text/typescript",
+  "application/typescript",
+  "text/javascript",
+  "application/javascript",
+  "application/x-javascript",
+  "text/x-go",
+  "application/x-go",
+  "text/x-shellscript",
+  "application/x-sh",
+  "text/x-sh",
 ]);
+
+/**
+ * File extensions that need conversion for non-Gemini providers
+ * Maps extension to human-readable label
+ */
+const CONVERTIBLE_EXTENSIONS: Record<string, string> = {
+  // Data formats
+  csv: "CSV",
+  json: "JSON",
+  xml: "XML",
+  md: "Markdown",
+  markdown: "Markdown",
+  // Web
+  html: "HTML",
+  htm: "HTML",
+  css: "CSS",
+  // Programming languages
+  py: "Python",
+  ts: "TypeScript",
+  tsx: "TypeScript",
+  js: "JavaScript",
+  jsx: "JavaScript",
+  tf: "Terraform",
+  go: "Go",
+  sh: "Bash",
+  bash: "Bash",
+};
 
 /**
  * File types that are universally supported by all providers (no conversion needed)
@@ -42,7 +91,7 @@ const UNIVERSALLY_SUPPORTED_MIME_TYPES = new Set([
   "image/webp",
   // PDFs
   "application/pdf",
-  // Plain text
+  // Plain text (no conversion needed - already text)
   "text/plain",
 ]);
 
@@ -58,6 +107,59 @@ export type FileValidationResult =
   | { allowed: false; error: string };
 
 /**
+ * Extract file extension from filename
+ */
+function getFileExtension(filename: string): string {
+  const parts = filename.toLowerCase().split(".");
+  return parts.length > 1 ? parts[parts.length - 1] : "";
+}
+
+/**
+ * Check if a file is convertible based on MIME type or extension
+ */
+function isConvertible(mimeType: string, extension: string): boolean {
+  // Check MIME type first
+  if (CONVERTIBLE_MIME_TYPES.has(mimeType)) {
+    return true;
+  }
+
+  // For generic MIME types, check extension
+  if (
+    mimeType === "application/octet-stream" ||
+    mimeType === "text/plain" ||
+    !mimeType
+  ) {
+    return extension in CONVERTIBLE_EXTENSIONS;
+  }
+
+  return false;
+}
+
+/**
+ * Get a human-readable label for a file
+ */
+function getFileTypeLabel(mimeType: string, extension: string): string {
+  // Try extension first (more reliable for code files)
+  if (extension in CONVERTIBLE_EXTENSIONS) {
+    return CONVERTIBLE_EXTENSIONS[extension];
+  }
+
+  // Fall back to MIME type
+  const mimeLabels: Record<string, string> = {
+    "text/csv": "CSV",
+    "application/json": "JSON",
+    "text/markdown": "Markdown",
+    "text/md": "Markdown",
+    "text/xml": "XML",
+    "application/xml": "XML",
+    "text/html": "HTML",
+    "text/css": "CSS",
+  };
+
+  return mimeLabels[mimeType] || "This";
+}
+
+/**
  * Validate if a file can be uploaded based on the current model provider
  */
 export function validateFileForModel(
@@ -66,9 +168,10 @@ export function validateFileForModel(
 ): FileValidationResult {
   const mimeType = file.type;
   const fileName = file.name;
+  const extension = getFileExtension(fileName);
 
   // Check if file is completely blocked (binary files)
-  if (BLOCKED_MIME_TYPES.has(mimeType)) {
+  if (BLOCKED_MIME_TYPES.has(mimeType) || BLOCKED_EXTENSIONS.has(extension)) {
     return {
       allowed: false,
       error: `${fileName} cannot be processed with ${model.provider}. Binary files like Excel (.xlsx) and Word (.docx) documents are not supported. Please export as CSV or plain text instead.`,
@@ -80,16 +183,16 @@ export function validateFileForModel(
     return { allowed: true };
   }
 
-  // Check if file will be converted
-  if (CONVERTIBLE_MIME_TYPES.has(mimeType)) {
-    const fileTypeLabel = getFileTypeLabel(mimeType);
+  // Check if file will be converted (by MIME type or extension)
+  if (isConvertible(mimeType, extension)) {
+    const fileTypeLabel = getFileTypeLabel(mimeType, extension);
     return {
       allowed: true,
       warning: `${fileTypeLabel} file will be converted to plain text for ${model.provider}. For better results, consider using Google Gemini which natively supports this file type.`,
     };
   }
 
-  // Check if file is universally supported (images, PDFs, plain text)
+  // Check if file is universally supported (images, PDFs, plain text without convertible extension)
   if (UNIVERSALLY_SUPPORTED_MIME_TYPES.has(mimeType)) {
     return { allowed: true };
   }
@@ -99,20 +202,4 @@ export function validateFileForModel(
     allowed: true,
     warning: `File type "${mimeType}" is not recognized. This upload may not work as expected with ${model.provider}.`,
   };
-}
-
-/**
- * Get a human-readable label for a file type
- */
-function getFileTypeLabel(mimeType: string): string {
-  const labels: Record<string, string> = {
-    "text/csv": "CSV",
-    "application/json": "JSON",
-    "text/plain": "Text",
-    "text/markdown": "Markdown",
-    "text/md": "Markdown",
-    "text/xml": "XML",
-    "application/xml": "XML",
-  };
-  return labels[mimeType] || "This";
 }
