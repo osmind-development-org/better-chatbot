@@ -6,5 +6,11 @@ export default defineConfig({
   plugins: [tsconfigPaths()],
   test: {
     exclude: ["**/tests/**", "**/node_modules/**"],
+    alias: {
+      "server-only": new URL(
+        "./src/test-utils/server-only-mock.ts",
+        import.meta.url,
+      ).pathname,
+    },
   },
 });
