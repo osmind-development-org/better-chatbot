@@ -54,6 +54,7 @@ import { EMOJI_DATA } from "lib/const";
 import { AgentSummary } from "app-types/agent";
 import { FileUIPart } from "ai";
 import { useChatModels } from "@/hooks/queries/use-chat-models";
+import { validateFileForModel } from "lib/ai/file-validation";
 
 interface PromptInputProps {
   placeholder?: string;
@@ -212,6 +213,22 @@ export default function PromptInput({
         return;
       }
 
+      // Validate file type compatibility with current model
+      const validation = validateFileForModel(file, chatModel!);
+      if (!validation.allowed) {
+        toast.error(validation.error);
+        // Reset input
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+        return;
+      }
+
+      // Show warning if file will be converted
+      if (validation.warning) {
+        toast.warning(validation.warning);
+      }
+
       // Create preview URL
       const previewUrl = URL.createObjectURL(file);
       const fileId = generateUUID();
@@ -307,7 +324,7 @@ export default function PromptInput({
       }
       setIsUploadDropdownOpen(false);
     },
-    [threadId, upload, appStoreMutate, t],
+    [threadId, upload, appStoreMutate, t, model],
   );
 
   const handleGenerateImage = useCallback(
@@ -425,6 +442,7 @@ export default function PromptInput({
               type: "file",
               url: file.url || file.dataUrl || "",
               mediaType: file.mimeType,
+              filename: file.name,
             }) as FileUIPart,
         ),
         {

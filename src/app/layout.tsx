@@ -45,7 +45,13 @@ export default async function RootLayout({
             <NextIntlClientProvider>
               <div id="root">
                 {children}
-                <Toaster richColors />
+                <Toaster
+                  richColors
+                  position="top-right"
+                  expand={true}
+                  visibleToasts={9}
+                  closeButton
+                />
               </div>
             </NextIntlClientProvider>
           </ThemeStyleProvider>
