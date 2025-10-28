@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - mgk/plt-0-adding-CLAUDE-md-for-agent-usage  # Testing ARM64 runners
+      - mgk/mgk/plt-0-speed-up-builds # Testing ARM64 runners
   workflow_dispatch:
 
 # Prevent overlapping builds
