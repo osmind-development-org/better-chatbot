@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - mgk/plt-0-speed-up-builds # Testing ARM64 runners
   workflow_dispatch:
 
 # Prevent overlapping builds
@@ -14,8 +15,7 @@ concurrency:
 jobs:
   build-and-push:
     name: Build and Push to ECR
-    runs-on: ubuntu-latest
-    environment: prod
+    runs-on: ubuntu-24.04-arm64-4-core
 
     permissions:
       id-token: write
@@ -46,11 +46,14 @@ jobs:
           working_directory: .
           build_context: .
           platforms: linux/arm64
+          push: ${{ github.ref == 'refs/heads/main' }}
+          skip_latest_tag: ${{ github.ref != 'refs/heads/main' }}
 
   deploy:
     name: Deploy to ECS
     runs-on: ubuntu-latest
     needs: [build-and-push]
+    if: github.ref == 'refs/heads/main'
     environment: prod
 
     permissions:
