@@ -9,6 +9,8 @@ import { customModelProvider } from "lib/ai/models";
 import globalLogger from "logger";
 import { buildUserSystemPrompt } from "lib/ai/prompts";
 import { getUserPreferences } from "lib/user/server";
+import { sanitizeOpenAIFileContentIDs } from "lib/ai/file-conversion";
+import { ChatModel } from "app-types/chat";
 
 import { colorize } from "consola/utils";
 
@@ -27,10 +29,7 @@ export async function POST(request: Request) {
 
     const { messages, chatModel, instructions } = json as {
       messages: UIMessage[];
-      chatModel?: {
-        provider: string;
-        model: string;
-      };
+      chatModel?: ChatModel;
       instructions?: string;
     };
     logger.info(`model: ${chatModel?.provider}/${chatModel?.model}`);
@@ -38,12 +37,15 @@ export async function POST(request: Request) {
     const userPreferences =
       (await getUserPreferences(session.user.id)) || undefined;
 
+    // Sanitize OpenAI file content IDs when using non-OpenAI providers
+    const sanitizedMessages = sanitizeOpenAIFileContentIDs(messages, chatModel);
+
     return streamText({
       model,
       system: `${buildUserSystemPrompt(session.user, userPreferences)} ${
         instructions ? `\n\n${instructions}` : ""
       }`.trim(),
-      messages: convertToModelMessages(messages),
+      messages: convertToModelMessages(sanitizedMessages),
       experimental_transform: smoothStream({ chunking: "word" }),
     }).toUIMessageStreamResponse();
   } catch (error: any) {

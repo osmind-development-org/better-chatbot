@@ -53,10 +53,16 @@ const createS3Client = () => {
   });
 };
 
-const buildKey = (filename: string) => {
+const buildKey = (filename: string, pathPrefix?: string) => {
   const safeName = sanitizeFilename(filename);
   const id = generateUUID();
   const prefix = STORAGE_PREFIX ? `${STORAGE_PREFIX}/` : "";
+
+  // If pathPrefix is provided, use it instead of the default prefix structure
+  if (pathPrefix) {
+    return path.posix.join(pathPrefix, `${id}-${safeName}`);
+  }
+
   return path.posix.join(prefix, `${id}-${safeName}`);
 };
 
@@ -125,7 +131,7 @@ export const createS3FileStorage = (): FileStorage => {
 
       const buffer = await toBuffer(content);
       const filename = options.filename ?? "file";
-      const key = buildKey(filename);
+      const key = buildKey(filename, options.pathPrefix);
       const contentType =
         options.contentType ?? getContentTypeFromFilename(filename);
 
@@ -147,9 +153,24 @@ export const createS3FileStorage = (): FileStorage => {
         uploadedAt: new Date(),
       };
 
+      // If useSignedUrl is true or pathPrefix is provided, return a presigned URL
+      // Otherwise return the public URL format
+      let sourceUrl: string;
+      if (options.useSignedUrl || options.pathPrefix) {
+        const getCommand = new GetObjectCommand({
+          Bucket: S3_BUCKET,
+          Key: key,
+        });
+        sourceUrl = await getSignedUrl(s3, getCommand, {
+          expiresIn: 604800, // 7 days in seconds
+        });
+      } else {
+        sourceUrl = buildPublicUrl(key);
+      }
+
       return {
         key,
-        sourceUrl: buildPublicUrl(key),
+        sourceUrl,
         metadata,
       };
     },

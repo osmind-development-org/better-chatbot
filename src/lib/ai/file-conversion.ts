@@ -2,6 +2,7 @@ import "server-only";
 import { UIMessage, FileUIPart, TextUIPart } from "ai";
 import { ChatModel } from "app-types/chat";
 import logger from "logger";
+import { generateUUID } from "lib/utils";
 import {
   CONVERTIBLE_MIME_TYPES,
   CONVERTIBLE_EXTENSIONS_TO_LANGUAGE,
@@ -181,6 +182,79 @@ async function fetchFileContent(url: string): Promise<string> {
       `Could not download file for conversion: ${error instanceof Error ? error.message : String(error)}`,
     );
   }
+}
+
+/**
+ * Check if a string looks like an OpenAI file content ID
+ * OpenAI file content IDs follow the pattern: fc_[hex characters]{40+}
+ */
+function isOpenAIFileContentID(value: string): boolean {
+  // OpenAI file content IDs start with "fc_" followed by at least 40 hex characters
+  return /^fc_[a-f0-9]{40,}$/i.test(value);
+}
+
+/**
+ * Check if a string looks like an OpenAI message ID
+ * OpenAI message IDs follow the pattern: msg_[hex characters]{40+}
+ */
+function isOpenAIMessageID(value: string): boolean {
+  // OpenAI message IDs start with "msg_" followed by at least 40 hex characters
+  return /^msg_[a-f0-9]{40,}$/i.test(value);
+}
+
+/**
+ * Sanitize messages by removing OpenAI file content IDs and regenerating OpenAI message IDs.
+ * This prevents the AI SDK from trying to resolve these IDs through OpenAI's API
+ * when they don't exist (e.g., Zero Data Retention organizations).
+ */
+export function sanitizeOpenAIFileContentIDs(
+  messages: UIMessage[],
+  chatModel?: ChatModel,
+): UIMessage[] {
+  // Always sanitize OpenAI message IDs and file content IDs, even when using OpenAI provider,
+  // because stale IDs from Zero Data Retention orgs will fail
+
+  // Process each message to filter out file parts with OpenAI file content IDs
+  // and regenerate OpenAI-style message IDs to prevent stale ID resolution
+  return messages.map((message) => {
+    // Regenerate message ID if it looks like an OpenAI message ID
+    // This prevents the AI SDK from trying to resolve stale IDs
+    let sanitizedId = message.id;
+    if (isOpenAIMessageID(message.id)) {
+      sanitizedId = generateUUID();
+      logger.warn(
+        `Regenerating OpenAI message ID to prevent stale ID resolution: ${message.id.substring(0, 20)}... -> ${sanitizedId.substring(0, 20)}...`,
+      );
+    }
+
+    // Always filter out file parts with OpenAI file content IDs
+    // Even when using OpenAI, stale file content IDs will fail with Zero Data Retention
+    const sanitizedParts = message.parts.filter((part) => {
+      if (part.type !== "file") {
+        return true; // Keep non-file parts
+      }
+
+      const filePart = part as FileUIPart;
+      const url = filePart.url || "";
+
+      // Check if the URL looks like an OpenAI file content ID
+      if (isOpenAIFileContentID(url)) {
+        logger.warn(
+          `Filtering out OpenAI file content ID from message history (provider: ${chatModel?.provider || "unknown"}): ${url.substring(0, 20)}...`,
+        );
+        return false; // Remove this file part
+      }
+
+      return true; // Keep other file parts
+    });
+
+    // If we removed all parts, keep the message but with empty parts (handled by AI SDK)
+    return {
+      ...message,
+      id: sanitizedId,
+      parts: sanitizedParts,
+    };
+  });
 }
 
 /**

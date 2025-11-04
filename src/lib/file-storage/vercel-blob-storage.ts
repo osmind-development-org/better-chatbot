@@ -15,9 +15,15 @@ import { generateUUID } from "lib/utils";
 
 const STORAGE_PREFIX = resolveStoragePrefix();
 
-const buildPathname = (filename: string) => {
+const buildPathname = (filename: string, pathPrefix?: string) => {
   const safeName = sanitizeFilename(filename);
   const id = generateUUID();
+
+  // If pathPrefix is provided, use it instead of the default prefix structure
+  if (pathPrefix) {
+    return path.posix.join(pathPrefix, `${id}-${safeName}`);
+  }
+
   const prefix = STORAGE_PREFIX ? `${STORAGE_PREFIX}/` : "";
   return path.posix.join(prefix, `${id}-${safeName}`);
 };
@@ -62,7 +68,7 @@ export const createVercelBlobStorage = (): FileStorage => {
     async upload(content, options: UploadOptions = {}) {
       const buffer = await toBuffer(content);
       const filename = options.filename ?? "file";
-      const pathname = buildPathname(filename);
+      const pathname = buildPathname(filename, options.pathPrefix);
 
       const result = await put(pathname, buffer, {
         access: "public",
@@ -77,6 +83,8 @@ export const createVercelBlobStorage = (): FileStorage => {
         uploadedAt: new Date(),
       };
 
+      // Vercel Blob URLs are always publicly accessible, so we can just return the URL
+      // The useSignedUrl option is mainly for S3 compatibility
       return {
         key: result.pathname,
         sourceUrl: result.url,

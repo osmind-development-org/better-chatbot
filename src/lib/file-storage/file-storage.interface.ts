@@ -18,6 +18,8 @@ export interface FileMetadata {
 export interface UploadOptions {
   filename?: string;
   contentType?: string;
+  pathPrefix?: string; // Optional path prefix (e.g., "generated-images")
+  useSignedUrl?: boolean; // If true, return a presigned/signed URL instead of public URL
 }
 
 export interface UploadResult {

@@ -17,6 +17,7 @@ import {
   generateText,
   UIMessage,
 } from "ai";
+import { sanitizeOpenAIFileContentIDs } from "lib/ai/file-conversion";
 import { checkConditionBranch } from "../condition";
 import {
   convertTiptapJsonToAiMessage,
@@ -102,19 +103,25 @@ export const llmNodeExecutor: NodeExecutor<LLMNodeData> = async ({
     }),
   );
 
+  // Sanitize OpenAI file content IDs when using non-OpenAI providers
+  const sanitizedMessages = sanitizeOpenAIFileContentIDs(
+    messages as UIMessage[],
+    node.model,
+  ) as Omit<UIMessage, "id">[];
+
   const isTextResponse =
     node.outputSchema.properties?.answer?.type === "string";
 
   state.setInput(node.id, {
     chatModel: node.model,
-    messages,
+    messages: sanitizedMessages,
     responseFormat: isTextResponse ? "text" : "object",
   });
 
   if (isTextResponse) {
     const response = await generateText({
       model,
-      messages: convertToModelMessages(messages),
+      messages: convertToModelMessages(sanitizedMessages),
     });
     return {
       output: {
@@ -126,7 +133,7 @@ export const llmNodeExecutor: NodeExecutor<LLMNodeData> = async ({
 
   const response = await generateObject({
     model,
-    messages: convertToModelMessages(messages),
+    messages: convertToModelMessages(sanitizedMessages),
     schema: jsonSchemaToZod(node.outputSchema.properties.answer),
     maxRetries: 3,
   });

@@ -5,6 +5,7 @@ import {
   ToolResultPart,
   tool as createTool,
   generateText,
+  UIMessage,
 } from "ai";
 import { generateImageWithNanoBanana } from "lib/ai/image/generate-image";
 import { serverFileStorage } from "lib/file-storage";
@@ -13,6 +14,7 @@ import z from "zod";
 import { ImageToolName } from "..";
 import logger from "logger";
 import { openai } from "@ai-sdk/openai";
+import { sanitizeOpenAIFileContentIDs } from "lib/ai/file-conversion";
 
 export type ImageToolResult = {
   images: {
@@ -37,11 +39,18 @@ export const nanoBananaTool = createTool({
       ),
   }),
   execute: async ({ mode }, { messages, abortSignal }) => {
+    // Double-sanitize as defense in depth - empirical evidence shows tool-level is needed
+    // even with route-level sanitization (possibly due to AI SDK internal message handling)
+    const sanitizedMessages = sanitizeOpenAIFileContentIDs(
+      messages as UIMessage[],
+      { provider: "google", model: "gemini-2.5-flash-image" },
+    );
+
     let hasFoundImage = false;
 
     // Get latest 6 messages and extract only the most recent image for editing context
     // This prevents multiple image references that could confuse the image generation model
-    const latestMessages = messages
+    const latestMessages = sanitizedMessages
       .slice(-6)
       .reverse()
       .map((m) => {
@@ -69,10 +78,17 @@ export const nanoBananaTool = createTool({
       .map((images) => {
         return Promise.all(
           images.map(async (image) => {
+            // Determine file extension from mimeType
+            const extension = image.mimeType?.split("/")[1] || "png";
+            const filename = `generated-image.${extension}`;
+
             const uploadedImage = await serverFileStorage.upload(
               Buffer.from(image.base64, "base64"),
               {
                 contentType: image.mimeType,
+                pathPrefix: "generated-images",
+                useSignedUrl: true,
+                filename,
               },
             );
             return {
@@ -125,8 +141,15 @@ export const openaiImageTool = createTool({
       throw new Error("OPENAI_API_KEY is not set");
     }
 
+    // Double-sanitize as defense in depth - empirical evidence shows tool-level is needed
+    // even with route-level sanitization (possibly due to AI SDK internal message handling)
+    const sanitizedMessages = sanitizeOpenAIFileContentIDs(
+      messages as UIMessage[],
+      { provider: "openai", model: "gpt-4.1" },
+    );
+
     let hasFoundImage = false;
-    const latestMessages = messages
+    const latestMessages = sanitizedMessages
       .slice(-6)
       .reverse()
       .flatMap((m) => {
@@ -164,6 +187,9 @@ export const openaiImageTool = createTool({
         const uploadedImage = await serverFileStorage
           .upload(Buffer.from(base64Image, "base64"), {
             contentType: "image/webp",
+            pathPrefix: "generated-images",
+            useSignedUrl: true,
+            filename: "generated-image.webp",
           })
           .catch(() => {
             throw new Error(
