@@ -68,7 +68,7 @@ jobs:
           env: prod
 
       - name: Authenticate to Tailscale
-        uses: ./.github/workflows/shared/authenticate-to-tailscale
+        uses: osmind-development-org/github-actions/authenticate-to-tailscale@main
         with:
           oauth_client_id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth_secret: ${{ secrets.TS_OAUTH_SECRET }}
