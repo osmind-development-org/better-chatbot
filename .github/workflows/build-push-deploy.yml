@@ -29,20 +29,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Get environment configuration
-        id: config
-        uses: ./.github/workflows/shared/get-config
-        with:
-          env: prod
-
       - name: Build and push to ECR
         id: build-and-push
         uses: ./.github/workflows/shared/build-and-push
         with:
           env: prod
-          aws_account_id: ${{ steps.config.outputs.aws_account_id }}
-          ecr_registry: ${{ steps.config.outputs.ecr_registry }}
-          ecr_repo_name: ${{ steps.config.outputs.ecr_repo }}
+          aws_account_id: ${{ vars.AWS_ACCOUNT_ID }}
+          ecr_registry: ${{ vars.ECR_REGISTRY }}
+          ecr_repo_name: ${{ vars.ECR_REPO }}
           working_directory: .
           build_context: .
           platforms: linux/arm64
@@ -61,12 +55,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Get environment configuration
-        id: config
-        uses: ./.github/workflows/shared/get-config
-        with:
-          env: prod
-
       - name: Authenticate to Tailscale
         uses: osmind-development-org/github-actions/authenticate-to-tailscale@main
         with:
@@ -76,15 +64,15 @@ jobs:
       - name: Deploy to ECS
         uses: ./.github/workflows/shared/deploy-to-ecs
         with:
-          aws_account_id: ${{ steps.config.outputs.aws_account_id }}
-          aws_role_name: ${{ steps.config.outputs.role_name }}
-          cluster_name: ${{ steps.config.outputs.cluster_name }}
+          aws_account_id: ${{ vars.AWS_ACCOUNT_ID }}
+          aws_role_name: ${{ vars.ROLE_NAME }}
+          cluster_name: ${{ vars.CLUSTER_NAME }}
           database_url: ${{ secrets.DATABASE_URL }}
           ecs_config_path: ./ecs/
           env: prod
           image_name: ${{ needs.build-and-push.outputs.IMAGE_NAME }}
           image_tag: ${{ needs.build-and-push.outputs.IMAGE_TAG }}
           migration_cmd: pnpm db:migrate
-          service_name: ${{ steps.config.outputs.service_name }}
+          service_name: ${{ vars.SERVICE_NAME }}
           working_directory: .
           timeout_minutes: "15"
