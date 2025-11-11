@@ -40,6 +40,7 @@ jobs:
         run: |
           find .github-actions -type f \( -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec sed -i 's|osmind-development-org/github-actions/|./.github-actions/|g' {} \;
           find .github-actions -type f \( -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec sed -i 's|osmind-development-org/github-actions@[^[:space:]]*|./.github-actions/|g' {} \;
+          find .github-actions -type f \( -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec sed -i 's|\./\.github-actions/\([^@[:space:]]*\)@[^[:space:]]*|./.github-actions/\1|g' {} \;
 
       - name: Build and push to ECR
         id: build-and-push
@@ -78,6 +79,7 @@ jobs:
         run: |
           find .github-actions -type f \( -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec sed -i 's|osmind-development-org/github-actions/|./.github-actions/|g' {} \;
           find .github-actions -type f \( -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec sed -i 's|osmind-development-org/github-actions@[^[:space:]]*|./.github-actions/|g' {} \;
+          find .github-actions -type f \( -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec sed -i 's|\./\.github-actions/\([^@[:space:]]*\)@[^[:space:]]*|./.github-actions/\1|g' {} \;
 
       - name: Authenticate to Tailscale
         uses: ./.github-actions/authenticate-to-tailscale
