@@ -29,9 +29,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Checkout github-actions repository
+        uses: actions/checkout@v4
+        with:
+          repository: osmind-development-org/github-actions
+          token: ${{ secrets.ACTIONS_REPO_ACCESS_TOKEN }}
+          path: .github-actions
+
       - name: Build and push to ECR
         id: build-and-push
-        uses: osmind-development-org/github-actions/build-and-push@main
+        uses: ./.github-actions/build-and-push
         with:
           env: prod
           aws_account_id: ${{ vars.AWS_ACCOUNT_ID }}
@@ -55,14 +62,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Checkout github-actions repository
+        uses: actions/checkout@v4
+        with:
+          repository: osmind-development-org/github-actions
+          token: ${{ secrets.ACTIONS_REPO_ACCESS_TOKEN }}
+          path: .github-actions
+
       - name: Authenticate to Tailscale
-        uses: osmind-development-org/github-actions/authenticate-to-tailscale@main
+        uses: ./.github-actions/authenticate-to-tailscale
         with:
           oauth_client_id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth_secret: ${{ secrets.TS_OAUTH_SECRET }}
 
       - name: Deploy to ECS
-        uses: osmind-development-org/github-actions/deploy-to-ecs@main
+        uses: ./.github-actions/deploy-to-ecs
         with:
           aws_account_id: ${{ vars.AWS_ACCOUNT_ID }}
           aws_role_name: ${{ vars.ROLE_NAME }}
