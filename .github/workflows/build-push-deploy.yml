@@ -36,6 +36,11 @@ jobs:
           token: ${{ secrets.ACTIONS_REPO_ACCESS_TOKEN }}
           path: .github-actions
 
+      - name: Replace private repository references with local references
+        run: |
+          find .github-actions -type f \( -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec sed -i 's|osmind-development-org/github-actions/|./.github-actions/|g' {} \;
+          find .github-actions -type f \( -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec sed -i 's|osmind-development-org/github-actions@[^[:space:]]*|./.github-actions/|g' {} \;
+
       - name: Build and push to ECR
         id: build-and-push
         uses: ./.github-actions/build-and-push
@@ -68,6 +73,11 @@ jobs:
           repository: osmind-development-org/github-actions
           token: ${{ secrets.ACTIONS_REPO_ACCESS_TOKEN }}
           path: .github-actions
+
+      - name: Replace private repository references with local references
+        run: |
+          find .github-actions -type f \( -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec sed -i 's|osmind-development-org/github-actions/|./.github-actions/|g' {} \;
+          find .github-actions -type f \( -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec sed -i 's|osmind-development-org/github-actions@[^[:space:]]*|./.github-actions/|g' {} \;
 
       - name: Authenticate to Tailscale
         uses: ./.github-actions/authenticate-to-tailscale
