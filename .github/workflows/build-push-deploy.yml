@@ -37,9 +37,7 @@ jobs:
           path: .github-actions
 
       - name: Replace private repository references with local references
-        run: |
-          find .github-actions -type f \( -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec sed -i 's|osmind-development-org/github-actions/|./.github-actions/|g' {} \;
-          find .github-actions -type f \( -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec sed -i 's|\./\.github-actions/\([^@[:space:]]*\)@[^[:space:]]*|./.github-actions/\1|g' {} \;
+        uses: ./.github/actions/replace-action-refs
 
       - name: Build and push to ECR
         id: build-and-push
@@ -75,9 +73,7 @@ jobs:
           path: .github-actions
 
       - name: Replace private repository references with local references
-        run: |
-          find .github-actions -type f \( -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec sed -i 's|osmind-development-org/github-actions/|./.github-actions/|g' {} \;
-          find .github-actions -type f \( -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec sed -i 's|\./\.github-actions/\([^@[:space:]]*\)@[^[:space:]]*|./.github-actions/\1|g' {} \;
+        uses: ./.github/actions/replace-action-refs
 
       - name: Authenticate to Tailscale
         uses: ./.github-actions/authenticate-to-tailscale
