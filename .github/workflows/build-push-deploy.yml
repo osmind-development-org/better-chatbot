@@ -36,6 +36,9 @@ jobs:
           token: ${{ secrets.ACTIONS_REPO_ACCESS_TOKEN }}
           path: .github-actions
 
+      - name: Replace private repository references with local references
+        uses: ./.github/actions/replace-action-refs
+
       - name: Build and push to ECR
         id: build-and-push
         uses: ./.github-actions/build-and-push
@@ -68,6 +71,9 @@ jobs:
           repository: osmind-development-org/github-actions
           token: ${{ secrets.ACTIONS_REPO_ACCESS_TOKEN }}
           path: .github-actions
+
+      - name: Replace private repository references with local references
+        uses: ./.github/actions/replace-action-refs
 
       - name: Authenticate to Tailscale
         uses: ./.github-actions/authenticate-to-tailscale
