@@ -1,0 +1,17 @@
+name: 'Replace Action References'
+description: 'Replace private repository references with local references in checked-out github-actions'
+
+runs:
+  using: composite
+  steps:
+    - name: Replace private repository references with local references
+      shell: bash
+      run: |
+        # Replace private repository references (e.g., osmind-development-org/github-actions/action-name)
+        # with local references (e.g., ./.github-actions/action-name)
+        find .github-actions -type f \( -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec sed -i 's|osmind-development-org/github-actions/|./.github-actions/|g' {} \;
+
+        # Remove version tags (e.g., @main, @v1) from local action references
+        # since local paths don't use version tags (e.g., ./.github-actions/action-name@main -> ./.github-actions/action-name)
+        find .github-actions -type f \( -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec sed -i 's|\./\.github-actions/\([^@[:space:]]*\)@[^[:space:]]*|./.github-actions/\1|g' {} \;
+
