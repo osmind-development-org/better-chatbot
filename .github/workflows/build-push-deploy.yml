@@ -49,6 +49,7 @@ jobs:
           ecr_repo_name: ${{ vars.ECR_REPO }}
           working_directory: .
           build_context: .
+          dockerfile: docker/Dockerfile
           platforms: linux/arm64
 
   deploy:
