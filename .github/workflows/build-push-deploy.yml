@@ -97,4 +97,3 @@ jobs:
           working_directory: .
           timeout_minutes: "15"
           package_manager: "pnpm"
-          deploy_scripts_path: ".github/deploy-scripts"
